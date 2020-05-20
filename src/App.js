@@ -1,6 +1,6 @@
 import React from 'react';
 import './App.css';
-import liveNode from './livenode.json';
+import liveNode from '../sumarized_report.json';
 import {withStyles, makeStyles} from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
