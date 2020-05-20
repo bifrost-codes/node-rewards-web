@@ -1,6 +1,7 @@
 {
   "name": "livenode",
   "version": "0.1.0",
+  "homepage": "rewards",
   "private": true,
   "dependencies": {
     "@material-ui/core": "^4.9.14",
