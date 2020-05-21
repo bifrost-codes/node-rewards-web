@@ -12,6 +12,13 @@ import logo from './bifrost-logo.svg';
 import Countdown from 'react-countdown-now';
 import Tooltip from '@material-ui/core/Tooltip';
 import InfoIcon from '@material-ui/icons/Info';
+import ExpansionPanel from '@material-ui/core/ExpansionPanel';
+import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
+import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
+import Typography from '@material-ui/core/Typography';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import SyntaxHighlighter from 'react-syntax-highlighter';
+import { a11yDark as CodeStyle } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 
 import './App.css';
 
@@ -19,13 +26,24 @@ const useStyles = makeStyles((theme) => ( {
   root: {
     flexGrow: 1,
   },
-  footer: {
-    width: 500,
+  panel: {
+    marginBottom: '30px'
   },
   table: {
-    minWidth: 600,
+    minWidth: 1095,
+  },
+  heading: {
+    fontSize: theme.typography.pxToRem(15),
+    fontWeight: theme.typography.fontWeightRegular,
   },
 } ));
+
+const StyledPanel = withStyles((theme) => ( {
+  root: {
+    backgroundColor: '#424242',
+    color: theme.palette.common.white,
+  },
+} ))(ExpansionPanel);
 
 const StyledTableCell = withStyles((theme) => ( {
   head: {
@@ -140,6 +158,18 @@ class App extends React.Component {
     const classes = useStyles;
     const {rewards, timeLeft, liveNode, totalPoints, tableRows} = this.state;
 
+    let panel = `docker run \\
+-p 30333:30333 \\
+-p 9944:9944 \\
+bifrostnetwork/bifrost:latest \\
+--rpc-cors all \\
+--unsafe-ws-external \\
+--name "NodeName | WalletAddress" # WalletAddress is the top 10 digits of the Bifrost address
+
+# Homepage: https://bifrost.codes
+# Dashboard: https://dashboard.bifrost.codes
+`;
+
     return (
         <div className={ classes.root }>
           <Grid container direction="column" justify="center"
@@ -157,8 +187,7 @@ class App extends React.Component {
                         <p>Rewards: { rewards.toString().
                             replace(/(\d)(?=(\d{3})+(?:\.\d+)?$)/g,
                                 '$1,') } BNC</p>
-                        <p>Remaining: <Countdown date={ timeLeft }
-                                                 renderer={ this.countdownRenderer }/>
+                        <p>Remaining: <Countdown date={ timeLeft } renderer={ this.countdownRenderer }/>
                         </p>
                       </Grid>
                       <Grid item xs={ 6 } style={ {float: 'right'} }
@@ -170,6 +199,22 @@ class App extends React.Component {
                   </Grid>
                 </Grid>
               </div>
+              <Grid item xs={ 12 } style={{ marginBottom: '10px' }}>
+                <StyledPanel>
+                  <ExpansionPanelSummary
+                      expandIcon={<ExpandMoreIcon style={{ color:'#FFFFFF' }}/>}
+                      aria-controls="panel1a-content"
+                      id="panel1a-header"
+                  >
+                    <Typography className={classes.heading}>How to join and get 💰rewards?</Typography>
+                  </ExpansionPanelSummary>
+                  <ExpansionPanelDetails>
+                    <SyntaxHighlighter className="highlightCode" language="powershell" style={CodeStyle}>
+                      {panel}
+                    </SyntaxHighlighter>
+                  </ExpansionPanelDetails>
+                </StyledPanel>
+              </Grid>
               <TableContainer component={ Paper }>
                 <Table className={ classes.table } aria-label="simple table">
                   <TableHead>

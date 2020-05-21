@@ -29,6 +29,12 @@ body {
     margin: 3px 0px;
 }
 
+.highlightCode {
+    text-align: left;
+    background-color: #424242 !important;
+    padding: 0 !important;
+}
+
 .footer {
     margin: 150px 0px;
 }
