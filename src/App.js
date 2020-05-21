@@ -219,6 +219,7 @@ class App extends React.Component {
                   </TableBody>
                 </Table>
               </TableContainer>
+              <div className="footer"></div>
             </Grid>
           </Grid>
         </div>
