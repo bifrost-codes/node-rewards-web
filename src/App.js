@@ -57,7 +57,7 @@ class App extends React.Component {
       liveNode: [],
       totalPoints: 0,
       tableRows: [],
-      timeInterval: 5,
+      timeInterval: 3,
     };
   }
 
