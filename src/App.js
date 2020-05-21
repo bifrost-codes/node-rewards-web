@@ -164,7 +164,7 @@ class App extends React.Component {
 bifrostnetwork/bifrost:latest \\
 --rpc-cors all \\
 --unsafe-ws-external \\
---name "NodeName | WalletAddress" # WalletAddress is the top 10 digits of the Bifrost address
+--name "NodeName | BNCAddress" # BNCAddress is the top 10 digits of the Bifrost address
 
 # Homepage: https://bifrost.codes
 # Dashboard: https://dashboard.bifrost.codes
