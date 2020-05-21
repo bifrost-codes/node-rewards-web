@@ -1,6 +1,5 @@
 import React from 'react';
 import './App.css';
-import liveNode from './sumarized_report.json';
 import {withStyles, makeStyles} from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -55,8 +54,13 @@ const rewards = 3000; // 3000 BNC
 
 let rows;
 let totalPoints;
+let liveNode = [];
 
 function getData() {
+  fetch('./sumarized_report.json').
+      then(response => response.json()).
+      then(json => liveNode = json);
+
   totalPoints = 0;
 
   for (let key in liveNode) {
@@ -118,17 +122,21 @@ function App() {
 
               <Grid container direction="row" justify="space-between">
                 <Grid item xs={ 12 }>
-                <div className="rules">
-                  <Grid item xs={ 6 } style={{float:"left"}}>
-                    <p>Rewards: { rewards.toString().
-                        replace(/(\d)(?=(\d{3})+(?:\.\d+)?$)/g, '$1,') } BNC</p>
-                    <p>Remaining: <Countdown date={ timeLeft } renderer={ countdownRenderer }/></p>
-                  </Grid>
-                  <Grid item xs={ 6 } style={{float:"right"}} align="right">
-                    <p>Total Points: { totalPoints }</p>
-                    <p>Nodes: { Object.keys(liveNode).length }</p>
-                  </Grid>
-                </div>
+                  <div className="rules">
+                    <Grid item xs={ 6 } style={ {float: 'left'} }>
+                      <p>Rewards: { rewards.toString().
+                          replace(/(\d)(?=(\d{3})+(?:\.\d+)?$)/g,
+                              '$1,') } BNC</p>
+                      <p>Remaining: <Countdown date={ timeLeft }
+                                               renderer={ countdownRenderer }/>
+                      </p>
+                    </Grid>
+                    <Grid item xs={ 6 } style={ {float: 'right'} }
+                          align="right">
+                      <p>Total Points: { totalPoints }</p>
+                      <p>Nodes: { Object.keys(liveNode).length }</p>
+                    </Grid>
+                  </div>
                 </Grid>
               </Grid>
             </div>
