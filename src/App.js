@@ -116,20 +116,22 @@ class App extends React.Component {
     for (let key in liveNode) {
       let node = liveNode[key];
       let version = node.peer_version.match(/\([\s\S]*\)/);
-      let nameString = version[0].replace(/^\(*|\)*$/g, '').split('|');
-      let name = nameString[0].replace(/(^\s*)|(\s*$)/g, '');
 
-      let wallet = 'x';
-      if (nameString[1]) {
-        wallet = nameString[1].replace(/(^\s*)|(\s*$)/g, '');
+      if(version[0]) {
+        let nameString = version[0].replace(/^\(*|\)*$/g, '').split('|');
+        let name = nameString[0].replace(/(^\s*)|(\s*$)/g, '');
+
+        let wallet = 'x';
+        if (nameString[1]) {
+          wallet = nameString[1].replace(/(^\s*)|(\s*$)/g, '');
+        }
+
+        let networkId = key;
+        let timePoints = node.duration * timeInterval;
+        let estimate = timePoints / ( points === 0 ? 1 : points ) * rewards;
+
+        rows.push(this.createData(name, wallet, networkId, timePoints, Number(estimate).toFixed(4)));
       }
-
-      let networkId = key;
-      let timePoints = node.duration * timeInterval;
-      let estimate = timePoints / ( points === 0 ? 1 : points ) * rewards;
-
-      rows.push(this.createData(name, wallet, networkId, timePoints,
-          Number(estimate).toFixed(4)));
     }
 
     this.setState({
