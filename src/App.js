@@ -70,7 +70,7 @@ class App extends React.Component {
     super(props);
 
     this.state = {
-      rewards: 3000,
+      rewards: 5000,
       timeLeft: 1591416000000,
       liveNode: [],
       totalPoints: 0,
