@@ -186,9 +186,7 @@ bifrostnetwork/bifrost:latest \\
                   <Grid item xs={ 12 }>
                     <div className="rules">
                       <Grid item xs={ 6 } style={ {float: 'left'} }>
-                        <p>Rewards: { rewards.toString().
-                            replace(/(\d)(?=(\d{3})+(?:\.\d+)?$)/g,
-                                '$1,') } BNC</p>
+                        <p>Rewards: 3,000 BNC  <span style={{color:'yellow'}}> + 2,000 BNC</span> = 5,000 BNC</p>
                         <p>Remaining: <Countdown date={ timeLeft } renderer={ this.countdownRenderer }/>
                         </p>
                       </Grid>
