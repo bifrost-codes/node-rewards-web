@@ -117,7 +117,7 @@ class App extends React.Component {
       let node = liveNode[key];
       let version = node.peer_version.match(/\([\s\S]*\)/);
 
-      if(version.length > 0) {
+      if(version && version.length > 0) {
         let nameString = version[0].replace(/^\(*|\)*$/g, '').split('|');
         let name = nameString[0].replace(/(^\s*)|(\s*$)/g, '');
 
