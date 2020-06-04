@@ -160,13 +160,20 @@ class App extends React.Component {
     const classes = useStyles;
     const {rewards, timeLeft, liveNode, totalPoints, tableRows} = this.state;
 
-    let panel = `docker run \\
+    let panel = `# 1. Execute the following command to join network
+# 2. Join telegram (https://t.me/bifrost_network)
+# 3. Trigger faucet bot to activate the BNC address
+    
+docker run \\
 -p 30333:30333 \\
 -p 9944:9944 \\
 bifrostnetwork/bifrost:latest \\
 --rpc-cors all \\
 --unsafe-ws-external \\
---name "NodeName | BNCAddress" # BNCAddress is the top 10 digits of the Bifrost address
+--name "NodeName | BNCAddress" 
+
+# BNCAddress is the top 10 digits of the Bifrost address
+# Match full address need activate (Step 3)
 
 # Homepage: https://bifrost.codes
 # Dashboard: https://dashboard.bifrost.codes
