@@ -76,6 +76,7 @@ class App extends React.Component {
       totalPoints: 0,
       tableRows: [],
       timeInterval: 3,
+      activateAddress: []
     };
   }
 
@@ -83,8 +84,8 @@ class App extends React.Component {
     this.getJsonData();
   }
 
-  createData(name, wallet, networkId, timePoints, estimate) {
-    return {name, wallet, networkId, timePoints, estimate};
+  createData(name, wallet, activate, networkId, timePoints, estimate) {
+    return {name, wallet, activate, networkId, timePoints, estimate};
   }
 
   getJsonData = () => {
@@ -98,6 +99,23 @@ class App extends React.Component {
     }).then(function(data) {
       this.setState({
         liveNode: data,
+      }, () => this.getActivateData());
+    }.bind(this)).catch(function(e) {
+      console.log(e);
+    });
+  }
+
+  getActivateData = () => {
+    fetch('./activate_address.json').then(function(response) {
+      if (response.status === 200) {
+        return response.json();
+      }
+      else {
+        return [];
+      }
+    }).then(function(data) {
+      this.setState({
+        activateAddress: data,
       }, () => this.setTableData());
     }.bind(this)).catch(function(e) {
       console.log(e);
@@ -105,7 +123,7 @@ class App extends React.Component {
   }
 
   setTableData = () => {
-    const {liveNode, timeInterval, rewards} = this.state;
+    const {liveNode, activateAddress, timeInterval, rewards} = this.state;
 
     let points = 0;
     for (let key in liveNode) {
@@ -121,7 +139,7 @@ class App extends React.Component {
         let nameString = version[0].replace(/^\(*|\)*$/g, '').split('|');
         let name = nameString[0].replace(/(^\s*)|(\s*$)/g, '');
 
-        let wallet = 'x';
+        let wallet = '-';
         if (nameString[1]) {
           wallet = nameString[1].replace(/(^\s*)|(\s*$)/g, '');
         }
@@ -130,7 +148,16 @@ class App extends React.Component {
         let timePoints = node.duration * timeInterval;
         let estimate = timePoints / ( points === 0 ? 1 : points ) * rewards;
 
-        rows.push(this.createData(name, wallet, networkId, timePoints, Number(estimate).toFixed(4)));
+        let activate = '❌';
+        if(wallet !== '-' && wallet.length >= 10) {
+          activateAddress.map(function (item) {
+            if(item.indexOf(wallet) === 0) {
+              activate = '✅';
+            }
+          })
+        }
+
+        rows.push(this.createData(name, wallet, activate, networkId, timePoints, Number(estimate).toFixed(4)));
       }
     }
 
@@ -160,9 +187,9 @@ class App extends React.Component {
     const classes = useStyles;
     const {rewards, timeLeft, liveNode, totalPoints, tableRows} = this.state;
 
-    let panel = `# 1. Execute the following command to join network
-# 2. Join telegram (https://t.me/bifrost_network)
-# 3. Trigger faucet bot to activate the BNC address
+    let panel = `# Step 1. Execute the following command to join network
+# Step 2. Join telegram (https://t.me/bifrost_network)
+# Step 3. Say '/want@bifrost_faucet_bot BNCAddress' in telegram group (trigger bot and record BNC address)
     
 docker run \\
 -p 30333:30333 \\
@@ -173,7 +200,10 @@ bifrostnetwork/bifrost:latest \\
 --name "NodeName | BNCAddress" 
 
 # BNCAddress is the top 10 digits of the Bifrost address
-# Match full address need activate (Step 3)
+# Match the full address need trigger bot (Step 3)
+
+# Distribution: 2020/06/10 12:00:00 (UTC+8)
+# Please match address successful before distribution
 
 # Homepage: https://bifrost.codes
 # Dashboard: https://dashboard.bifrost.codes
@@ -213,7 +243,7 @@ bifrostnetwork/bifrost:latest \\
                       aria-controls="panel1a-content"
                       id="panel1a-header"
                   >
-                    <Typography className={classes.heading}>How to join and get 💰rewards?</Typography>
+                    <Typography className={classes.heading}>How to join and get 💰 rewards?</Typography>
                   </ExpansionPanelSummary>
                   <ExpansionPanelDetails>
                     <SyntaxHighlighter className="highlightCode" language="powershell" style={CodeStyle}>
@@ -232,6 +262,20 @@ bifrostnetwork/bifrost:latest \\
                       </StyledTableCell>
                       <StyledTableCell align="left">
                         BNC Address
+                      </StyledTableCell>
+                      <StyledTableCell align="center">
+                        <div style={ {
+                          display: 'inline-block',
+                          verticalAlign: 'inherit',
+                          lineHeight: '16px',
+                          paddingRight: '3px',
+                        } }>
+                          <Tooltip placement="top"
+                                   title="Only matched addresses can receive BNC (Step 2 & Step 3)">
+                            <InfoIcon fontSize="small"/>
+                          </Tooltip>
+                        </div>
+                        Match
                       </StyledTableCell>
                       <StyledTableCell align="right">
                         Time Points&nbsp;(Point/Min)
@@ -255,13 +299,12 @@ bifrostnetwork/bifrost:latest \\
                   <TableBody>
                     { tableRows.map((row) => (
                         <StyledTableRow hover key={ row.name }>
-                          <StyledTableCell component="th" scope="row">
-                            { row.name }
+                          <StyledTableCell component="th" scope="row">{ row.name }
                           </StyledTableCell>
                           <StyledTableCell
                               align="left">{ row.networkId }</StyledTableCell>
-                          <StyledTableCell
-                              align="left">{ row.wallet }</StyledTableCell>
+                          <StyledTableCell align="left">{ row.wallet }</StyledTableCell>
+                          <StyledTableCell align="center">{ row.activate }</StyledTableCell>
                           <StyledTableCell
                               align="right">{ row.timePoints }</StyledTableCell>
                           <StyledTableCell align="right"
