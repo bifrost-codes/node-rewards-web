@@ -207,7 +207,7 @@ bifrostnetwork/bifrost:latest \\
                 </Grid>
               </div>
               <Grid item xs={ 12 } style={{ marginBottom: '10px' }}>
-                <StyledPanel>
+                <StyledPanel defaultExpanded>
                   <ExpansionPanelSummary
                       expandIcon={<ExpandMoreIcon style={{ color:'#FFFFFF' }}/>}
                       aria-controls="panel1a-content"
