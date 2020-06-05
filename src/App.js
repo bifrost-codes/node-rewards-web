@@ -76,7 +76,8 @@ class App extends React.Component {
       totalPoints: 0,
       tableRows: [],
       timeInterval: 3,
-      activateAddress: []
+      activateAddress: [],
+      matchCount: 0
     };
   }
 
@@ -131,6 +132,7 @@ class App extends React.Component {
     }
 
     let rows = [];
+    let match = 0;
     for (let key in liveNode) {
       let node = liveNode[key];
       let version = node.peer_version.match(/\([\s\S]*\)/);
@@ -153,6 +155,7 @@ class App extends React.Component {
           activateAddress.map(function (item) {
             if(item.indexOf(wallet) === 0) {
               activate = '✅';
+              match ++;
             }
           })
         }
@@ -164,8 +167,9 @@ class App extends React.Component {
     this.setState({
       totalPoints: points,
       tableRows: rows,
+      matchCount: match
     });
-  }
+  };
 
   countdownRenderer = ({days, hours, minutes, seconds, completed}) => {
     if (!completed) {
@@ -185,7 +189,7 @@ class App extends React.Component {
 
   render() {
     const classes = useStyles;
-    const {rewards, timeLeft, liveNode, totalPoints, tableRows} = this.state;
+    const {matchCount, timeLeft, liveNode, totalPoints, tableRows} = this.state;
 
     let panel = `# Step 1. Execute the following command to join network
 # Step 2. Join telegram (https://t.me/bifrost_network)
@@ -275,7 +279,7 @@ bifrostnetwork/bifrost:latest \\
                             <InfoIcon fontSize="small"/>
                           </Tooltip>
                         </div>
-                        Match
+                        Match ({matchCount})
                       </StyledTableCell>
                       <StyledTableCell align="right">
                         Time Points&nbsp;(Point/Min)
