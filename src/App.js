@@ -228,8 +228,7 @@ bifrostnetwork/bifrost:latest \\
                     <div className="rules">
                       <Grid item xs={ 6 } style={ {float: 'left'} }>
                         <p>Rewards: 3,000 BNC  <span style={{color:'yellow'}}> + 2,000 BNC</span> = 5,000 BNC</p>
-                        <p>Remaining: <Countdown date={ timeLeft } renderer={ this.countdownRenderer }/>
-                        </p>
+                        <p>Congratulation! Waiting for settlement</p>
                       </Grid>
                       <Grid item xs={ 6 } style={ {float: 'right'} }
                             align="right">
