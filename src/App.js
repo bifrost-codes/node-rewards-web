@@ -228,7 +228,7 @@ bifrostnetwork/bifrost:latest \\
                     <div className="rules">
                       <Grid item xs={ 6 } style={ {float: 'left'} }>
                         <p>Rewards: 3,000 BNC  <span style={{color:'yellow'}}> + 2,000 BNC</span> = 5,000 BNC</p>
-                        <p>Congratulation! Waiting for distribution</p>
+                        <p>Congratulation! BNC already distribution: <a href="https://docs.google.com/spreadsheets/d/16myNjCoTrwl_rtfNZr_LDKkKwvF3DZ0QCPRCfDCwumA/edit?usp=sharing">Result</a></p>
                       </Grid>
                       <Grid item xs={ 6 } style={ {float: 'right'} }
                             align="right">
