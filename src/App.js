@@ -386,7 +386,8 @@ bifrostnetwork/bifrost:asgard-v0.4.0 \\
                           <Tooltip placement="top" title="Calculate: TimePoint / SUM(TimePoint) * 5,000 BNC">
                             <InfoIcon fontSize="small"/>
                           </Tooltip>
-                        </div>
+                        </div><br />
+                        <span style={{color: 'yellow'}}>5,000 BNC</span>
                       </StyledTableCell1>
                       <StyledTableCell2 align="center" colSpan={ 2 }>
                         Validator King Contest&nbsp;
@@ -400,7 +401,7 @@ bifrostnetwork/bifrost:asgard-v0.4.0 \\
                             <InfoIcon fontSize="small"/>
                           </Tooltip>
                         </div><br />
-                        <span style={{color: 'yellow'}}>Launch in &nbsp;<Countdown date={ 1595563200000 } renderer={ this.countdownRenderer }/></span>
+                        <span style={{color: 'yellow'}}>4,000 BNC Launch in &nbsp;<Countdown date={ 1595563200000 } renderer={ this.countdownRenderer }/></span>
                       </StyledTableCell2>
                       <StyledTableCell3 align="center" colSpan={ 3 }>
                         EOS Cross-chain Contest&nbsp;
@@ -414,7 +415,7 @@ bifrostnetwork/bifrost:asgard-v0.4.0 \\
                             <InfoIcon fontSize="small"/>
                           </Tooltip>
                         </div><br />
-                        <span style={{color: 'yellow'}}>Launch in &nbsp;<Countdown date={ 1595822400000 } renderer={ this.countdownRenderer }/></span>
+                        <span style={{color: 'yellow'}}>6,000 BNC Launch in &nbsp;<Countdown date={ 1595822400000 } renderer={ this.countdownRenderer }/></span>
                       </StyledTableCell3>
                       <StyledTableCell4 align="right">
                         Total
