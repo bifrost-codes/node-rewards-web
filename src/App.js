@@ -137,12 +137,21 @@ class App extends React.Component {
       totalNode: 0,
       matchCount: 0,
       tableRows: [],
+      eosAddressArray:[],
+      eosAddressArray2:[],
+      eosCountArray:[],
+      eosBalanceArray:[]
     };
   }
 
   async componentDidMount() {
     this.queryNodeData();
     // await this.queryBifrostNode();
+    /**const eosarr = await this.queryEosCount('duARUwYPfjnGwkcQng2xbqR49d7SYZ6x7PJ2bwA41FDiZPS');
+    console.log('eosArray********' + eosarr);
+    let eosBalanceObj = await this.queryEosBalance('fYUvxTio42vAEWz3b34D53eFCYv7Vo9RmfaZa4jXsbG7T8E');
+    const eosBalance =  Number(eosBalanceObj['balance']);
+    console.log('*****eosBalance' + eosBalance);*/
   }
 
   createData(
@@ -176,7 +185,11 @@ class App extends React.Component {
         then(function(data) {
           this.setState({
             liveNode: data.data,
-          }, () => this.setTableData());
+          }, async () => {
+            //循环数组，如果有fullAddress就塞入数组，然后批量接口查出转入转出次数以及eos balance，
+            await this.queryOtherData()
+            await this.setTableData()
+          });
         }.bind(this));
   };
 
@@ -192,6 +205,43 @@ class App extends React.Component {
   //   });
   // }
 
+  async queryEosCountMulti() {
+    const wsProvider = new WsProvider('wss://n2.testnet.liebi.com/');
+    const api = await ApiPromise.create({
+      provider: wsProvider,
+      types: parameter,
+    });
+    return await api.query.bridgeEos.timesOfCrossChainTrade.multi(this.state.eosAddressArray);
+  }
+
+  async queryEosCount(address) {
+    const wsProvider = new WsProvider('wss://n2.testnet.liebi.com/');
+    const api = await ApiPromise.create({
+      provider: wsProvider,
+      types: parameter,
+    });
+    return await api.query.bridgeEos.timesOfCrossChainTrade(address);
+  }
+
+  async queryEosBalanceMulti() {
+    const wsProvider = new WsProvider('wss://n2.testnet.liebi.com/');
+    const api = await ApiPromise.create({
+      provider: wsProvider,
+      types: parameter,
+    });
+    return await api.query.assets.accountAssets.multi(this.state.eosAddressArray2);
+  }
+
+  async queryEosBalance(address) {
+    const wsProvider = new WsProvider('wss://n2.testnet.liebi.com/');
+    const api = await ApiPromise.create({
+      provider: wsProvider,
+      types: parameter,
+    });
+    return await api.query.assets.accountAssets(['vEOS', address]);
+  }
+
+
   // async validator(address) {
   //   const wsProvider = new WsProvider('wss://n2.testnet.liebi.com/');
   //   const api = await ApiPromise.create({
@@ -204,7 +254,57 @@ class App extends React.Component {
   //   });
   // }
 
-  setTableData = () => {
+     queryOtherData = async () => {
+      const {liveNode} = this.state;
+      let eosAddressArray = [];
+      let eosAddressArray2 = [];
+      // let eosBalanceArray = [];
+      // console.log('***开始查询' + new Date().getTime())
+      for (let key in liveNode) {
+        let node = liveNode[key];
+        if (node.fullAddress) {
+          eosAddressArray.push(node.fullAddress);
+          eosAddressArray2.push(['vEOS', node.fullAddress]);
+        }
+       }
+       
+      /**for (let key in liveNode) {
+        let node = liveNode[key];
+        if (node.fullAddress) {
+          const eosarr = await this.queryEosCount(node.fullAddress);
+          eosCountArray.push(eosarr);
+          let eosBalanceObj = await  this.queryEosBalance(node.fullAddress);
+          eosBalanceArray.push(Number(eosBalanceObj['balance']));
+          console.log(JSON.stringify(eosCountArray) + '********' + JSON.stringify(eosBalanceArray))
+        } else {
+          eosCountArray.push([]);
+          eosBalanceArray.push(0)
+        }
+      }*/
+      // console.log('**结束' + new Date().getTime())
+      // console.log(JSON.stringify(eosCountArray) + '********' + JSON.stringify(eosBalanceArray))
+  
+      this.setState({
+        eosAddressArray,
+        eosAddressArray2
+      },async () => {
+        const eosCountArray = await this.queryEosCountMulti();
+        const eosBalanceArray = await this.queryEosBalanceMulti();
+        console.log(eosCountArray + '********');
+        let stateArray = [];
+        for (let item in eosBalanceArray) {
+          stateArray.push(eosBalanceArray[item].get('balance'));
+        }
+        console.log(stateArray + '----------');
+        this.setState({
+          eosCountArray,        //转入和转出次数的数组
+          eosBalanceArray:stateArray  //eos余额数组
+        })
+      }); 
+      
+    }
+
+    setTableData = async () => {
     const {liveNode, timePointRewards} = this.state;
 
     let totalTimePoint = 0;
@@ -232,7 +332,14 @@ class App extends React.Component {
       }
 
       let timePointEst = Number(node.timePoints / ( totalTimePoint === 0 ? 1 : totalTimePoint ) * timePointRewards).toFixed(4);
-
+      // if (node.fullAddress) {
+      //   console.log('address*****' + node.fullAddress)
+      //   const eosarr = await this.queryEosCount(node.fullAddress);
+      //   console.log('********resArr循环里' + eosarr);
+      //   let eosBalanceObj = await this.queryEosBalance(node.fullAddress);
+      //   const eosBalance =  Number(eosBalanceObj['balance']);
+      //   console.log('*****eosBalance循环里' + eosBalance);
+      // }
       tableRows.push(this.createData(node.name, address, node.fullAddress, node.timePoints, timePointEst, 0, 0, 0, 0, 0, 0));
     }
 
