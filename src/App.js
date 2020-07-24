@@ -137,8 +137,8 @@ class App extends React.Component {
       totalNode: 0,
       matchCount: 0,
       tableRows: [],
-      eosAddressArray:[],
-      eosAddressArray2:[],
+      bifrostAddress:[],
+      bifrostAddress2:[],
       eosCountArray:[],
       eosBalanceArray:[]
     };
@@ -205,13 +205,31 @@ class App extends React.Component {
   //   });
   // }
 
+  async queryCurrentEra() {
+    const wsProvider = new WsProvider('wss://n2.testnet.liebi.com/');
+    const api = await ApiPromise.create({
+      provider: wsProvider,
+      types: parameter,
+    });
+    return await api.query.bridgeEos.timesOfCrossChainTrade.multi(this.state.bifrostAddress);
+  }
+
+  async queryEosCount(address) {
+    const wsProvider = new WsProvider('wss://n2.testnet.liebi.com/');
+    const api = await ApiPromise.create({
+      provider: wsProvider,
+      types: parameter,
+    });
+    return await api.query.bridgeEos.timesOfCrossChainTrade(address);
+  }
+
   async queryEosCountMulti() {
     const wsProvider = new WsProvider('wss://n2.testnet.liebi.com/');
     const api = await ApiPromise.create({
       provider: wsProvider,
       types: parameter,
     });
-    return await api.query.bridgeEos.timesOfCrossChainTrade.multi(this.state.eosAddressArray);
+    return await api.query.bridgeEos.timesOfCrossChainTrade.multi(this.state.bifrostAddress);
   }
 
   async queryEosCount(address) {
@@ -229,7 +247,7 @@ class App extends React.Component {
       provider: wsProvider,
       types: parameter,
     });
-    return await api.query.assets.accountAssets.multi(this.state.eosAddressArray2);
+    return await api.query.assets.accountAssets.multi(this.state.bifrostAddress2);
   }
 
   async queryEosBalance(address) {
@@ -256,15 +274,15 @@ class App extends React.Component {
 
      queryOtherData = async () => {
       const {liveNode} = this.state;
-      let eosAddressArray = [];
-      let eosAddressArray2 = [];
+      let bifrostAddress = [];
+      let bifrostAddress2 = [];
       // let eosBalanceArray = [];
       // console.log('***开始查询' + new Date().getTime())
       for (let key in liveNode) {
         let node = liveNode[key];
         if (node.fullAddress) {
-          eosAddressArray.push(node.fullAddress);
-          eosAddressArray2.push(['vEOS', node.fullAddress]);
+          bifrostAddress.push(node.fullAddress);
+          bifrostAddress2.push(['vEOS', node.fullAddress]);
         }
        }
        
@@ -285,8 +303,8 @@ class App extends React.Component {
       // console.log(JSON.stringify(eosCountArray) + '********' + JSON.stringify(eosBalanceArray))
   
       this.setState({
-        eosAddressArray,
-        eosAddressArray2
+        bifrostAddress,
+        bifrostAddress2
       },async () => {
         const eosCountArray = await this.queryEosCountMulti();
         const eosBalanceArray = await this.queryEosBalanceMulti();
@@ -382,6 +400,40 @@ class App extends React.Component {
     }
     else {
       return null;
+    }
+  };
+
+  kingValidatorCountdownRenderer = ({days, hours, minutes, seconds, completed}) => {
+    if (!completed) {
+      let d = days <= 1 ? 'day' : 'days';
+      let h = hours < 10 ? '0' : '';
+      let m = minutes < 10 ? '0' : '';
+      let s = seconds < 10 ? '0' : '';
+
+      return (
+          <span>4,000 BNC Launch in { days } { d } { h }{ hours }:{ m }{ minutes }:{ s }{ seconds }</span>
+      );
+    } else {
+      return (
+          <span>4,000 BNC</span>
+      );
+    }
+  };
+
+  EosCrossChainCountdownRenderer = ({days, hours, minutes, seconds, completed}) => {
+    if (!completed) {
+      let d = days <= 1 ? 'day' : 'days';
+      let h = hours < 10 ? '0' : '';
+      let m = minutes < 10 ? '0' : '';
+      let s = seconds < 10 ? '0' : '';
+
+      return (
+          <span>6,000 BNC Launch in { days } { d } { h }{ hours }:{ m }{ minutes }:{ s }{ seconds }</span>
+      );
+    } else {
+      return (
+          <span>6,000 BNC</span>
+      );
     }
   };
 
@@ -508,7 +560,7 @@ bifrostnetwork/bifrost:asgard-v0.4.0 \\
                             <InfoIcon fontSize="small"/>
                           </Tooltip>
                         </div><br />
-                        <span style={{color: 'yellow'}}>4,000 BNC Launch in &nbsp;<Countdown date={ 1595563200000 } renderer={ this.countdownRenderer }/></span>
+                        <span style={{color: 'yellow'}}>4,000 BNC Launch in &nbsp;<Countdown date={ 1595563200000 } renderer={ this.kingValidatorCountdownRenderer }/></span>
                       </StyledTableCell2>
                       <StyledTableCell3 align="center" colSpan={ 3 }>
                         EOS Cross-chain Contest&nbsp;
@@ -522,7 +574,7 @@ bifrostnetwork/bifrost:asgard-v0.4.0 \\
                             <InfoIcon fontSize="small"/>
                           </Tooltip>
                         </div><br />
-                        <span style={{color: 'yellow'}}>6,000 BNC Launch in &nbsp;<Countdown date={ 1595822400000 } renderer={ this.countdownRenderer }/></span>
+                        <span style={{color: 'yellow'}}><Countdown date={ 1595822400000 } renderer={ this.EosCrossChainCountdownRenderer }/></span>
                       </StyledTableCell3>
                       <StyledTableCell4 align="right">
                         Total
