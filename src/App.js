@@ -127,7 +127,6 @@ class App extends React.Component {
       timePointRewards: 5000,
       totalTimePoint: 0,
       validatorRewards: 4000,
-      totalValidator: 0,
       eosRewards: 6000,
       totalEosCross: 0,
       totalVEosBalance: 0,
@@ -135,40 +134,29 @@ class App extends React.Component {
       liveNode: [],
       totalPoints: 0,
       totalNode: 0,
-      matchCount: 0,
       tableRows: [],
       bifrostAddress:[],
       bifrostAddress2:[],
+      bifrostAddress3:[],
       eosCountArray:[],
-      eosBalanceArray:[]
+      eosBalanceArray:[],
+      validatorArray:[],
+      validatorCount: 10,
     };
   }
 
   async componentDidMount() {
     this.queryNodeData();
-    // await this.queryBifrostNode();
-    /**const eosarr = await this.queryEosCount('duARUwYPfjnGwkcQng2xbqR49d7SYZ6x7PJ2bwA41FDiZPS');
-    console.log('eosArray********' + eosarr);
-    let eosBalanceObj = await this.queryEosBalance('fYUvxTio42vAEWz3b34D53eFCYv7Vo9RmfaZa4jXsbG7T8E');
-    const eosBalance =  Number(eosBalanceObj['balance']);
-    console.log('*****eosBalance' + eosBalance);*/
   }
 
-  createData(
-      name, address, fullAddress, timePoint, timePointEst, validator, validatorEst, eosCross,
-      vEosBalance, eosEst, totalEst) {
+  createData(name, address, fullAddress, timePoint, timePointEst, emptyCount) {
     return {
       name,
       address,
       fullAddress,
       timePoint,
       timePointEst,
-      validator,
-      validatorEst,
-      eosCross,
-      vEosBalance,
-      eosEst,
-      totalEst,
+      emptyCount
     };
   }
 
@@ -194,7 +182,7 @@ class App extends React.Component {
   };
 
   // async vEosBalance(address) {
-  //   const wsProvider = new WsProvider('wss://n2.testnet.liebi.com/');
+  //   const wsProvider = new WsProvider('wss://n1.testnet.liebi.com/');
   //   const api = await ApiPromise.create({
   //     provider: wsProvider,
   //     types: parameter,
@@ -205,17 +193,40 @@ class App extends React.Component {
   //   });
   // }
 
-  async queryCurrentEra() {
-    const wsProvider = new WsProvider('wss://n2.testnet.liebi.com/');
+  async queryValidatorStakesMulti() {
+    const wsProvider = new WsProvider('wss://n1.testnet.liebi.com/');
     const api = await ApiPromise.create({
       provider: wsProvider,
       types: parameter,
     });
-    return await api.query.bridgeEos.timesOfCrossChainTrade.multi(this.state.bifrostAddress);
+
+    return await api.query.staking.erasStakers.multi(this.state.bifrostAddress3);
+  }
+
+  async queryCurrentEra() {
+    const wsProvider = new WsProvider('wss://n1.testnet.liebi.com/');
+    const api = await ApiPromise.create({
+      provider: wsProvider,
+      types: parameter,
+    });
+
+    let activeEra = await api.query.staking.activeEra();
+
+    return activeEra.value.index.toString()
+  }
+
+  async queryValidatorCount() {
+    const wsProvider = new WsProvider('wss://n1.testnet.liebi.com/');
+    const api = await ApiPromise.create({
+      provider: wsProvider,
+      types: parameter,
+    });
+
+    return await api.query.staking.validatorCount().toString();
   }
 
   async queryEosCount(address) {
-    const wsProvider = new WsProvider('wss://n2.testnet.liebi.com/');
+    const wsProvider = new WsProvider('wss://n1.testnet.liebi.com/');
     const api = await ApiPromise.create({
       provider: wsProvider,
       types: parameter,
@@ -224,7 +235,7 @@ class App extends React.Component {
   }
 
   async queryEosCountMulti() {
-    const wsProvider = new WsProvider('wss://n2.testnet.liebi.com/');
+    const wsProvider = new WsProvider('wss://n1.testnet.liebi.com/');
     const api = await ApiPromise.create({
       provider: wsProvider,
       types: parameter,
@@ -233,7 +244,7 @@ class App extends React.Component {
   }
 
   async queryEosCount(address) {
-    const wsProvider = new WsProvider('wss://n2.testnet.liebi.com/');
+    const wsProvider = new WsProvider('wss://n1.testnet.liebi.com/');
     const api = await ApiPromise.create({
       provider: wsProvider,
       types: parameter,
@@ -242,7 +253,7 @@ class App extends React.Component {
   }
 
   async queryEosBalanceMulti() {
-    const wsProvider = new WsProvider('wss://n2.testnet.liebi.com/');
+    const wsProvider = new WsProvider('wss://n1.testnet.liebi.com/');
     const api = await ApiPromise.create({
       provider: wsProvider,
       types: parameter,
@@ -251,7 +262,7 @@ class App extends React.Component {
   }
 
   async queryEosBalance(address) {
-    const wsProvider = new WsProvider('wss://n2.testnet.liebi.com/');
+    const wsProvider = new WsProvider('wss://n1.testnet.liebi.com/');
     const api = await ApiPromise.create({
       provider: wsProvider,
       types: parameter,
@@ -261,7 +272,7 @@ class App extends React.Component {
 
 
   // async validator(address) {
-  //   const wsProvider = new WsProvider('wss://n2.testnet.liebi.com/');
+  //   const wsProvider = new WsProvider('wss://n1.testnet.liebi.com/');
   //   const api = await ApiPromise.create({
   //     provider: wsProvider,
   //     types: parameter,
@@ -276,13 +287,16 @@ class App extends React.Component {
       const {liveNode} = this.state;
       let bifrostAddress = [];
       let bifrostAddress2 = [];
-      // let eosBalanceArray = [];
-      // console.log('***开始查询' + new Date().getTime())
+      let bifrostAddress3 = [];
+
+      let currentEra = await this.queryCurrentEra();
+
       for (let key in liveNode) {
         let node = liveNode[key];
         if (node.fullAddress) {
           bifrostAddress.push(node.fullAddress);
           bifrostAddress2.push(['vEOS', node.fullAddress]);
+          bifrostAddress3.push([currentEra, node.fullAddress]);
         }
        }
        
@@ -304,19 +318,32 @@ class App extends React.Component {
   
       this.setState({
         bifrostAddress,
-        bifrostAddress2
+        bifrostAddress2,
+        bifrostAddress3
       },async () => {
-        const eosCountArray = await this.queryEosCountMulti();
-        const eosBalanceArray = await this.queryEosBalanceMulti();
-        console.log(eosCountArray + '********');
-        let stateArray = [];
-        for (let item in eosBalanceArray) {
-          stateArray.push(eosBalanceArray[item].get('balance'));
+        // const eosCountArray = await this.queryEosCountMulti();
+        // const eosBalanceArray = await this.queryEosBalanceMulti();
+        const validatorStakes = await this.queryValidatorStakesMulti();
+        // let stateArray = [];
+        // for (let item in eosBalanceArray) {
+        //   stateArray.push(eosBalanceArray[item].get('balance'));
+        // }
+
+        let validator = [];
+        for (let item in validatorStakes) {
+          let total = Number(validatorStakes[item].get('total')) / 1000000000000;
+          let own = Number(validatorStakes[item].get('own')) / 1000000000000;
+
+          validator.push({
+            total: Number(total).toFixed(0),
+            own: Number(own).toFixed(0)
+          });
         }
-        console.log(stateArray + '----------');
+
         this.setState({
-          eosCountArray,        //转入和转出次数的数组
-          eosBalanceArray:stateArray  //eos余额数组
+          // eosCountArray,        //转入和转出次数的数组
+          // eosBalanceArray:stateArray,  //eos余额数组
+          validatorArray:validator
         })
       }); 
       
@@ -333,6 +360,8 @@ class App extends React.Component {
     }
 
     let tableRows = [];
+    let emptyCount = 0;
+
     for (let key in liveNode) {
       let node = liveNode[key];
       let address = node.address;
@@ -341,6 +370,8 @@ class App extends React.Component {
         let suffix = ' ❌';
         if (node.fullAddress) {
           suffix = ' ✅';
+        } else {
+          emptyCount ++;
         }
 
         address += suffix;
@@ -350,15 +381,8 @@ class App extends React.Component {
       }
 
       let timePointEst = Number(node.timePoints / ( totalTimePoint === 0 ? 1 : totalTimePoint ) * timePointRewards).toFixed(4);
-      // if (node.fullAddress) {
-      //   console.log('address*****' + node.fullAddress)
-      //   const eosarr = await this.queryEosCount(node.fullAddress);
-      //   console.log('********resArr循环里' + eosarr);
-      //   let eosBalanceObj = await this.queryEosBalance(node.fullAddress);
-      //   const eosBalance =  Number(eosBalanceObj['balance']);
-      //   console.log('*****eosBalance循环里' + eosBalance);
-      // }
-      tableRows.push(this.createData(node.name, address, node.fullAddress, node.timePoints, timePointEst, 0, 0, 0, 0, 0, 0));
+
+      tableRows.push(this.createData(node.name, address, node.fullAddress, node.timePoints, timePointEst, emptyCount));
     }
 
     this.setState({
@@ -367,25 +391,6 @@ class App extends React.Component {
       tableRows: tableRows,
     });
   };
-
-  async queryBifrostNode() {
-    const { tableRows } = this.state;
-    console.log('aaa');
-
-    const wsProvider = new WsProvider('wss://n2.testnet.liebi.com/');
-    const api = await ApiPromise.create({
-      provider: wsProvider,
-      types: parameter,
-    });
-
-    let updateRows = tableRows;
-
-    updateRows.map(function (item, key) {
-      console.log('aaa',item)
-    });
-
-
-  }
 
   countdownRenderer = ({days, hours, minutes, seconds, completed}) => {
     if (!completed) {
@@ -443,7 +448,6 @@ class App extends React.Component {
       timePointRewards,
       totalTimePoint,
       validatorRewards,
-      totalValidator,
       eosRewards,
       totalEosCross,
       totalVEosBalance,
@@ -451,8 +455,11 @@ class App extends React.Component {
       liveNode,
       totalPoints,
       totalNode,
-      matchCount,
       tableRows,
+      eosCountArray,
+      eosBalanceArray,
+      validatorArray,
+      validatorCount
     } = this.state;
 
     let panel = `# Step 1. Execute the following command to join network
@@ -482,6 +489,128 @@ bifrostnetwork/bifrost:asgard-v0.4.0 \\
 # Dashboard: https://dash.bifrost.finance
 `;
 
+    let formatTables = [];
+
+    let totalCross = 0;
+    if(eosCountArray.length > 0) {
+      eosCountArray.map((item) => {
+        totalCross += item[0]
+        totalCross += item[1]
+      })
+    }
+
+    let totalBalance = 0;
+    if(eosBalanceArray.length > 0) {
+      eosBalanceArray.map((item) => {
+        totalBalance += item
+      })
+    }
+
+    tableRows.map((row, key) => {
+      let total = '-';
+      let ownOther = '-';
+      let isValidator = '-';
+      let validatorEst = 0;
+      if(validatorArray.length > 0) {
+        let validator = validatorArray[key - row.emptyCount];
+        if(validator && validator.total > 0) {
+          let others = validator.total - validator.own;
+          total = validator.total
+          ownOther = validator.own + ' / ' + others
+          isValidator = '✅';
+          validatorEst = validatorRewards / validatorCount;
+        }
+      }
+
+      let crossDisplay = '- / -';
+      let currentCross = 0;
+      if(eosCountArray.length > 0) {
+        let cross = eosCountArray[key - row.emptyCount];
+
+        if(cross) {
+          currentCross = cross[0] + cross[1];
+          crossDisplay = cross[0] + ' / ' + cross[1];
+        }
+      }
+
+      let balanceDisplay = '-';
+      let currentBalance = 0
+      if(eosBalanceArray.length > 0) {
+        let balance = eosBalanceArray[key - row.emptyCount];
+
+        if(balance) {
+          balanceDisplay = balance + ' vEOS';
+          currentBalance = balance
+        }
+      }
+
+      let crossChainEst = (currentCross / (totalCross === 0 ? 1 : totalCross) * 0.7 + currentBalance / (totalBalance === 0 ? 1 : totalBalance) * 0.3) * eosRewards;
+
+      let totalEst = Number(Number(row.timePointEst) + Number(validatorEst) + Number(crossChainEst)).toFixed(4)
+
+      let updateRow = {
+        name: row.name,
+        address: row.address,
+        timePoint: row.timePoint,
+        timePointEst: row.timePointEst,
+        total: total,
+        ownOther: ownOther,
+        validator: isValidator,
+        validatorEst: validatorEst,
+        crossChain: crossDisplay,
+        vEosBalance: balanceDisplay,
+        crossChainEst: crossChainEst,
+        totalEst: totalEst,
+      };
+
+      formatTables.push(updateRow);
+    });
+
+    let tableBody = (
+        <TableBody>
+          { formatTables.map((row, key) => (
+              <StyledTableRow hover key={ key }>
+                <StyledTableCell1 component="th" scope="row" align="left">
+                  { row.name }
+                </StyledTableCell1>
+                <StyledTableCell1 align="left">
+                  { row.address }
+                </StyledTableCell1>
+                <StyledTableCell1 align="right">
+                  { row.timePoint }
+                </StyledTableCell1>
+                <StyledTableCell1 align="right" style={ {color: '#ffffa6'} }>
+                  { row.timePointEst } BNC
+                </StyledTableCell1>
+                <StyledTableCell2 align="right">
+                  { row.ownOther }
+                </StyledTableCell2>
+                <StyledTableCell2 align="right">
+                  { row.total }
+                </StyledTableCell2>
+                <StyledTableCell2 align="right">
+                  { row.validator }
+                </StyledTableCell2>
+                <StyledTableCell2 align="right" style={ {color: '#ffffa6'} }>
+                  { row.validatorEst } BNC
+                </StyledTableCell2>
+                <StyledTableCell3 align="center">
+                  { row.crossChain }
+                </StyledTableCell3>
+                <StyledTableCell3 align="center">
+                  { row.vEosBalance }
+                </StyledTableCell3>
+                <StyledTableCell3 align="right" style={ {color: '#ffffa6'} }>
+                  { row.crossChainEst } BNC
+                </StyledTableCell3>
+                <StyledTableCell4 align="right" style={ {color: 'yellow'} }>
+                  { row.totalEst } BNC
+                </StyledTableCell4>
+              </StyledTableRow>
+          )) }
+        </TableBody>
+    )
+
     return (
         <div className={ classes.root }>
           <Grid container direction="column" justify="center"
@@ -505,6 +634,8 @@ bifrostnetwork/bifrost:asgard-v0.4.0 \\
                             align="right">
                         <p>Total Points: { totalTimePoint }</p>
                         <p>Nodes: { Object.keys(liveNode).length }</p>
+                        <p>Validators: { validatorCount }</p>
+                        <p>Total Staking (ASG): { validatorCount }</p>
                       </Grid>
                     </div>
                   </Grid>
@@ -548,7 +679,7 @@ bifrostnetwork/bifrost:asgard-v0.4.0 \\
                         </div><br />
                         <span style={{color: 'yellow'}}>5,000 BNC</span>
                       </StyledTableCell1>
-                      <StyledTableCell2 align="center" colSpan={ 2 }>
+                      <StyledTableCell2 align="center" colSpan={ 4 }>
                         Validator King Contest&nbsp;
                         <div style={{
                           display: 'inline-block',
@@ -560,7 +691,7 @@ bifrostnetwork/bifrost:asgard-v0.4.0 \\
                             <InfoIcon fontSize="small"/>
                           </Tooltip>
                         </div><br />
-                        <span style={{color: 'yellow'}}>4,000 BNC Launch in &nbsp;<Countdown date={ 1595563200000 } renderer={ this.kingValidatorCountdownRenderer }/></span>
+                        <span style={{color: 'yellow'}}><Countdown date={ 1595563200000 } renderer={ this.kingValidatorCountdownRenderer }/></span>
                       </StyledTableCell2>
                       <StyledTableCell3 align="center" colSpan={ 3 }>
                         EOS Cross-chain Contest&nbsp;
@@ -594,6 +725,12 @@ bifrostnetwork/bifrost:asgard-v0.4.0 \\
                         est.
                       </StyledTableCell1>
                       <StyledTableCell2 align="center">
+                        Own / Other
+                      </StyledTableCell2>
+                      <StyledTableCell2 align="center">
+                        Total
+                      </StyledTableCell2>
+                      <StyledTableCell2 align="center">
                         Validator
                       </StyledTableCell2>
                       <StyledTableCell2 align="center">
@@ -623,42 +760,7 @@ bifrostnetwork/bifrost:asgard-v0.4.0 \\
                       </StyledTableCell4>
                     </StyledTableRow>
                   </TableHead>
-                  <TableBody>
-                    { tableRows.map((row, key) => (
-                        <StyledTableRow hover key={ key }>
-                          <StyledTableCell1 component="th" scope="row" align="left">
-                            { row.name }
-                          </StyledTableCell1>
-                          <StyledTableCell1 align="left">
-                            { row.address }
-                            </StyledTableCell1>
-                          <StyledTableCell1 align="right">
-                            { row.timePoint }
-                            </StyledTableCell1>
-                          <StyledTableCell1 align="right" style={ {color: '#ffffa6'} }>
-                            { row.timePointEst } BNC
-                            </StyledTableCell1>
-                          <StyledTableCell2 align="right">
-                            {/*{ row.validator }*/} -
-                            </StyledTableCell2>
-                          <StyledTableCell2 align="right" style={ {color: '#ffffa6'} }>
-                            {/*{ row.validatorEst } BNC*/} -
-                          </StyledTableCell2>
-                          <StyledTableCell3 align="center">
-                            {/*{ row.eosCross }*/} -
-                          </StyledTableCell3>
-                          <StyledTableCell3 align="center">
-                            {/*{ row.vEosBalance }*/} -
-                          </StyledTableCell3>
-                          <StyledTableCell3 align="right" style={ {color: '#ffffa6'} }>
-                            {/*{ row.eosEst } BNC*/} -
-                          </StyledTableCell3>
-                          <StyledTableCell4 align="right" style={ {color: 'yellow'} }>
-                            { row.timePointEst } BNC
-                          </StyledTableCell4>
-                        </StyledTableRow>
-                    )) }
-                  </TableBody>
+                  { tableBody }
                 </Table>
               </TableContainer>
               <div className="footer"></div>
