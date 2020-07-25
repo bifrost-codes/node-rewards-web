@@ -566,6 +566,10 @@ bifrostnetwork/bifrost:asgard-v0.4.0 \\
       formatTables.push(updateRow);
     });
 
+    formatTables = formatTables.sort(function(a, b){
+      return b.totalEst - a.totalEst
+    });
+
     let tableBody = (
         <TableBody>
           { formatTables.map((row, key) => (
