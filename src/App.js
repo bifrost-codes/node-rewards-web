@@ -684,7 +684,7 @@ bifrostnetwork/bifrost:asgard-v0.4.0 \\
                         <span style={{color: 'yellow'}}>5,000 BNC</span>
                       </StyledTableCell1>
                       <StyledTableCell2 align="center" colSpan={ 4 }>
-                        Validator King Contest&nbsp;
+                        Validator King Contest (Max 50)&nbsp;
                         <div style={{
                           display: 'inline-block',
                           verticalAlign: 'inherit',
