@@ -592,7 +592,7 @@ bifrostnetwork/bifrost:asgard-v0.4.0 \\
                 <StyledTableCell2 align="right">
                   { row.total }
                 </StyledTableCell2>
-                <StyledTableCell2 align="right">
+                <StyledTableCell2 align="center">
                   { row.validator }
                 </StyledTableCell2>
                 <StyledTableCell2 align="right" style={ {color: '#ffffa6'} }>
