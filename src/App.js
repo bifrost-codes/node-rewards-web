@@ -321,13 +321,13 @@ class App extends React.Component {
         bifrostAddress2,
         bifrostAddress3
       },async () => {
-        // const eosCountArray = await this.queryEosCountMulti();
-        // const eosBalanceArray = await this.queryEosBalanceMulti();
         const validatorStakes = await this.queryValidatorStakesMulti();
-        // let stateArray = [];
-        // for (let item in eosBalanceArray) {
-        //   stateArray.push(eosBalanceArray[item].get('balance'));
-        // }
+        const eosCountArray = await this.queryEosCountMulti();
+        const eosBalanceArray = await this.queryEosBalanceMulti();
+        let stateArray = [];
+        for (let item in eosBalanceArray) {
+          stateArray.push(eosBalanceArray[item].get('balance'));
+        }
 
         let validator = [];
         for (let item in validatorStakes) {
@@ -341,8 +341,8 @@ class App extends React.Component {
         }
 
         this.setState({
-          // eosCountArray,        //转入和转出次数的数组
-          // eosBalanceArray:stateArray,  //eos余额数组
+          eosCountArray,        //转入和转出次数的数组
+          eosBalanceArray:stateArray,  //eos余额数组
           validatorArray:validator
         })
       }); 
@@ -494,15 +494,15 @@ bifrostnetwork/bifrost:asgard-v0.4.0 \\
     let totalCross = 0;
     if(eosCountArray.length > 0) {
       eosCountArray.map((item) => {
-        totalCross += item[0]
-        totalCross += item[1]
+        totalCross += Number(item[0])
+        totalCross += Number(item[1])
       })
     }
 
     let totalBalance = 0;
     if(eosBalanceArray.length > 0) {
       eosBalanceArray.map((item) => {
-        totalBalance += item
+        totalBalance += Number(item)
       })
     }
 
@@ -528,7 +528,7 @@ bifrostnetwork/bifrost:asgard-v0.4.0 \\
         let cross = eosCountArray[key - row.emptyCount];
 
         if(cross) {
-          currentCross = cross[0] + cross[1];
+          currentCross = Number(cross[0]) + Number(cross[1]);
           crossDisplay = cross[0] + ' / ' + cross[1];
         }
       }
