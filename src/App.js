@@ -141,7 +141,7 @@ class App extends React.Component {
       eosCountArray:[],
       eosBalanceArray:[],
       validatorArray:[],
-      validatorCount: 20,
+      validatorCount: 30,
     };
   }
 
@@ -375,9 +375,9 @@ class App extends React.Component {
         }
 
         address += suffix;
-      }
-      else {
+      } else {
         address = '-';
+        emptyCount ++;
       }
 
       let timePointEst = Number(node.timePoints / ( totalTimePoint === 0 ? 1 : totalTimePoint ) * timePointRewards).toFixed(4);
@@ -518,7 +518,7 @@ bifrostnetwork/bifrost:asgard-v0.4.0 \\
           total = validator.total
           ownOther = validator.own + ' / ' + others
           isValidator = '✅';
-          validatorEst = validatorRewards / validatorCount;
+          validatorEst = Number(validatorRewards / validatorCount).toFixed(4);
         }
       }
 
@@ -566,7 +566,7 @@ bifrostnetwork/bifrost:asgard-v0.4.0 \\
       formatTables.push(updateRow);
     });
 
-    let sortTables = formatTables.clone();
+    let sortTables = [...formatTables];
 
     sortTables = sortTables.sort(function(a, b){
       return b.totalEst - a.totalEst
