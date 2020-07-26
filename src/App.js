@@ -566,13 +566,15 @@ bifrostnetwork/bifrost:asgard-v0.4.0 \\
       formatTables.push(updateRow);
     });
 
-    formatTables = formatTables.sort(function(a, b){
+    let sortTables = formatTables.clone();
+
+    sortTables = sortTables.sort(function(a, b){
       return b.totalEst - a.totalEst
     });
 
     let tableBody = (
         <TableBody>
-          { formatTables.map((row, key) => (
+          { sortTables.map((row, key) => (
               <StyledTableRow hover key={ key }>
                 <StyledTableCell1 component="th" scope="row" align="left">
                   { row.name }
