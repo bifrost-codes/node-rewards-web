@@ -141,7 +141,7 @@ class App extends React.Component {
       eosCountArray:[],
       eosBalanceArray:[],
       validatorArray:[],
-      validatorCount: 30,
+      validatorCount: 40,
     };
   }
 
