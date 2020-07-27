@@ -522,14 +522,14 @@ bifrostnetwork/bifrost:asgard-v0.4.0 \\
         }
       }
 
-      let crossDisplay = '- / -';
+      let crossDisplay = '-';
       let currentCross = 0;
       if(eosCountArray.length > 0) {
         let cross = eosCountArray[key - row.emptyCount];
 
         if(cross) {
           currentCross = Number(cross[0]) + Number(cross[1]);
-          crossDisplay = cross[0] + ' / ' + cross[1];
+          crossDisplay = cross[0];
         }
       }
 
@@ -750,7 +750,7 @@ bifrostnetwork/bifrost:asgard-v0.4.0 \\
                           lineHeight: '16px',
                           paddingRight: '3px',
                         }}>
-                          <Tooltip placement="top" title="EOS Jungle Testnet <-> Bifrost transfer amount ≥ 50 EOS, count 1 time of cross-chain">
+                          <Tooltip placement="top" title="EOS Jungle Testnet -> Bifrost transfer amount ≥ 50 EOS, count 1 time of cross-chain">
                             <InfoIcon fontSize="small"/>
                           </Tooltip>
                         </div>
