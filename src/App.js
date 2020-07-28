@@ -141,7 +141,7 @@ class App extends React.Component {
       eosCountArray:[],
       eosBalanceArray:[],
       validatorArray:[],
-      validatorCount: 40,
+      validatorCount: 50,
     };
   }
 
@@ -641,7 +641,7 @@ bifrostnetwork/bifrost:asgard-v0.4.0 \\
                         <p>Total Points: { totalTimePoint }</p>
                         <p>Nodes: { Object.keys(liveNode).length }</p>
                         <p>Validators: { validatorCount }</p>
-                        <p>Total Staking (ASG): { validatorCount }</p>
+                        {/*<p>Total Staking (ASG): { validatorCount }</p>*/}
                       </Grid>
                     </div>
                   </Grid>
