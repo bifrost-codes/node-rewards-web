@@ -182,7 +182,7 @@ class App extends React.Component {
   };
 
   // async vEosBalance(address) {
-  //   const wsProvider = new WsProvider('wss://n1.testnet.liebi.com/');
+  //   const wsProvider = new WsProvider('ws://n6.testnet.liebi.com:9944');
   //   const api = await ApiPromise.create({
   //     provider: wsProvider,
   //     types: parameter,
@@ -194,7 +194,7 @@ class App extends React.Component {
   // }
 
   async queryValidatorStakesMulti(bifrostAddress3) {
-    const wsProvider = new WsProvider('wss://n1.testnet.liebi.com/');
+    const wsProvider = new WsProvider('ws://n6.testnet.liebi.com:9944');
     const api = await ApiPromise.create({
       provider: wsProvider,
       types: parameter,
@@ -204,7 +204,7 @@ class App extends React.Component {
   }
 
   async queryCurrentEra() {
-    const wsProvider = new WsProvider('wss://n1.testnet.liebi.com/');
+    const wsProvider = new WsProvider('ws://n6.testnet.liebi.com:9944');
     const api = await ApiPromise.create({
       provider: wsProvider,
       types: parameter,
@@ -216,7 +216,7 @@ class App extends React.Component {
   }
 
   async queryValidatorCount() {
-    const wsProvider = new WsProvider('wss://n1.testnet.liebi.com/');
+    const wsProvider = new WsProvider('ws://n6.testnet.liebi.com:9944');
     const api = await ApiPromise.create({
       provider: wsProvider,
       types: parameter,
@@ -226,7 +226,7 @@ class App extends React.Component {
   }
 
   async queryEosCount(address) {
-    const wsProvider = new WsProvider('wss://n1.testnet.liebi.com/');
+    const wsProvider = new WsProvider('ws://n6.testnet.liebi.com:9944');
     const api = await ApiPromise.create({
       provider: wsProvider,
       types: parameter,
@@ -235,7 +235,7 @@ class App extends React.Component {
   }
 
   async queryEosCountMulti(bifrostAddress) {
-    const wsProvider = new WsProvider('wss://n1.testnet.liebi.com/');
+    const wsProvider = new WsProvider('ws://n6.testnet.liebi.com:9944');
     const api = await ApiPromise.create({
       provider: wsProvider,
       types: parameter,
@@ -244,7 +244,7 @@ class App extends React.Component {
   }
 
   async queryEosCount(address) {
-    const wsProvider = new WsProvider('wss://n1.testnet.liebi.com/');
+    const wsProvider = new WsProvider('ws://n6.testnet.liebi.com:9944');
     const api = await ApiPromise.create({
       provider: wsProvider,
       types: parameter,
@@ -253,7 +253,7 @@ class App extends React.Component {
   }
 
   async queryEosBalanceMulti(bifrostAddress2) {
-    const wsProvider = new WsProvider('wss://n1.testnet.liebi.com/');
+    const wsProvider = new WsProvider('ws://n6.testnet.liebi.com:9944');
     const api = await ApiPromise.create({
       provider: wsProvider,
       types: parameter,
@@ -262,7 +262,7 @@ class App extends React.Component {
   }
 
   async queryEosBalance(address) {
-    const wsProvider = new WsProvider('wss://n1.testnet.liebi.com/');
+    const wsProvider = new WsProvider('ws://n6.testnet.liebi.com:9944');
     const api = await ApiPromise.create({
       provider: wsProvider,
       types: parameter,
@@ -272,7 +272,7 @@ class App extends React.Component {
 
 
   // async validator(address) {
-  //   const wsProvider = new WsProvider('wss://n1.testnet.liebi.com/');
+  //   const wsProvider = new WsProvider('ws://n6.testnet.liebi.com:9944');
   //   const api = await ApiPromise.create({
   //     provider: wsProvider,
   //     types: parameter,
@@ -301,7 +301,7 @@ class App extends React.Component {
        }
 
        console.log('finish loop*****' + new Date().getTime());
-       
+
       /**for (let key in liveNode) {
         let node = liveNode[key];
         if (node.fullAddress) {
@@ -333,8 +333,8 @@ class App extends React.Component {
         console.log('finish to query first 30 data******' + new Date().getTime());
         console.log(validatorStakes.length + '*******' + eosCountArray.length + '****' + eosBalanceArray.length)
         this.setDataAfterQuery(eosBalanceArray,validatorStakes,eosCountArray);
-      }); 
-      
+      });
+
     }
 
     setOtherQueryData(eosBalanceArray,validatorStakes,eosCountArray) {
@@ -342,16 +342,16 @@ class App extends React.Component {
         let eosBalanceArrayCopy = JSON.parse(JSON.stringify(this.state.eosBalanceArray));
         let validatorArrayCopy = JSON.parse(JSON.stringify(this.state.validatorArray));
         let stateArray = [];
-        
+
         for (let item in eosBalanceArray) {
           stateArray.push(eosBalanceArray[item].get('balance'));
         }
-  
+
         let validator = [];
         for (let item in validatorStakes) {
           let total = Number(validatorStakes[item].get('total')) / 1000000000000;
           let own = Number(validatorStakes[item].get('own')) / 1000000000000;
-  
+
           validator.push({
             total: Number(total).toFixed(0),
             own: Number(own).toFixed(0)
@@ -371,7 +371,7 @@ class App extends React.Component {
 
     setDataAfterQuery(eosBalanceArray,validatorStakes,eosCountArray) {
       let stateArray = [];
-        
+
       for (let item in eosBalanceArray) {
         stateArray.push(eosBalanceArray[item].get('balance'));
       }
