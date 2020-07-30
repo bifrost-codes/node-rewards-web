@@ -594,12 +594,12 @@ bifrostnetwork/bifrost:asgard-v0.4.0 \\
         let balance = eosBalanceArray[key - row.emptyCount];
 
         if(balance) {
-          balanceDisplay = balance + ' vEOS';
+          balanceDisplay = Number(Number(balance) / 1000000000000).toFixed(4) + ' vEOS';
           currentBalance = balance
         }
       }
 
-      let crossChainEst = (currentCross / (totalCross === 0 ? 1 : totalCross) * 0.7 + currentBalance / (totalBalance === 0 ? 1 : totalBalance) * 0.3) * eosRewards;
+      let crossChainEst = Number((currentCross / (totalCross === 0 ? 1 : totalCross) * 0.7 + currentBalance / (totalBalance === 0 ? 1 : totalBalance) * 0.3) * eosRewards).toFixed(4);
 
       let totalEst = Number(Number(row.timePointEst) + Number(validatorEst) + Number(crossChainEst)).toFixed(4)
 
