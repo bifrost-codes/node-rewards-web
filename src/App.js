@@ -182,7 +182,7 @@ class App extends React.Component {
   };
 
   // async vEosBalance(address) {
-  //   const wsProvider = new WsProvider('ws://n6.testnet.liebi.com:9944');
+  //   const wsProvider = new WsProvider('wss://n2.testnet.liebi.com');
   //   const api = await ApiPromise.create({
   //     provider: wsProvider,
   //     types: parameter,
@@ -194,7 +194,7 @@ class App extends React.Component {
   // }
 
   async queryValidatorStakesMulti(bifrostAddress3) {
-    const wsProvider = new WsProvider('ws://n6.testnet.liebi.com:9944');
+    const wsProvider = new WsProvider('wss://n2.testnet.liebi.com');
     const api = await ApiPromise.create({
       provider: wsProvider,
       types: parameter,
@@ -204,7 +204,7 @@ class App extends React.Component {
   }
 
   async queryCurrentEra() {
-    const wsProvider = new WsProvider('ws://n6.testnet.liebi.com:9944');
+    const wsProvider = new WsProvider('wss://n2.testnet.liebi.com');
     const api = await ApiPromise.create({
       provider: wsProvider,
       types: parameter,
@@ -216,7 +216,7 @@ class App extends React.Component {
   }
 
   async queryValidatorCount() {
-    const wsProvider = new WsProvider('ws://n6.testnet.liebi.com:9944');
+    const wsProvider = new WsProvider('wss://n2.testnet.liebi.com');
     const api = await ApiPromise.create({
       provider: wsProvider,
       types: parameter,
@@ -226,7 +226,7 @@ class App extends React.Component {
   }
 
   async queryEosCount(address) {
-    const wsProvider = new WsProvider('ws://n6.testnet.liebi.com:9944');
+    const wsProvider = new WsProvider('wss://n2.testnet.liebi.com');
     const api = await ApiPromise.create({
       provider: wsProvider,
       types: parameter,
@@ -235,7 +235,7 @@ class App extends React.Component {
   }
 
   async queryEosCountMulti(bifrostAddress) {
-    const wsProvider = new WsProvider('ws://n6.testnet.liebi.com:9944');
+    const wsProvider = new WsProvider('wss://n2.testnet.liebi.com');
     const api = await ApiPromise.create({
       provider: wsProvider,
       types: parameter,
@@ -244,7 +244,7 @@ class App extends React.Component {
   }
 
   async queryEosCount(address) {
-    const wsProvider = new WsProvider('ws://n6.testnet.liebi.com:9944');
+    const wsProvider = new WsProvider('wss://n2.testnet.liebi.com');
     const api = await ApiPromise.create({
       provider: wsProvider,
       types: parameter,
@@ -253,7 +253,7 @@ class App extends React.Component {
   }
 
   async queryEosBalanceMulti(bifrostAddress2) {
-    const wsProvider = new WsProvider('ws://n6.testnet.liebi.com:9944');
+    const wsProvider = new WsProvider('wss://n2.testnet.liebi.com');
     const api = await ApiPromise.create({
       provider: wsProvider,
       types: parameter,
@@ -262,7 +262,7 @@ class App extends React.Component {
   }
 
   async queryEosBalance(address) {
-    const wsProvider = new WsProvider('ws://n6.testnet.liebi.com:9944');
+    const wsProvider = new WsProvider('wss://n2.testnet.liebi.com');
     const api = await ApiPromise.create({
       provider: wsProvider,
       types: parameter,
@@ -272,7 +272,7 @@ class App extends React.Component {
 
 
   // async validator(address) {
-  //   const wsProvider = new WsProvider('ws://n6.testnet.liebi.com:9944');
+  //   const wsProvider = new WsProvider('wss://n2.testnet.liebi.com');
   //   const api = await ApiPromise.create({
   //     provider: wsProvider,
   //     types: parameter,
