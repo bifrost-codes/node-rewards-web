@@ -193,14 +193,14 @@ class App extends React.Component {
   //   });
   // }
 
-  async queryValidatorStakesMulti() {
+  async queryValidatorStakesMulti(bifrostAddress3) {
     const wsProvider = new WsProvider('wss://n1.testnet.liebi.com/');
     const api = await ApiPromise.create({
       provider: wsProvider,
       types: parameter,
     });
 
-    return await api.query.staking.erasStakers.multi(this.state.bifrostAddress3);
+    return await api.query.staking.erasStakers.multi(bifrostAddress3);
   }
 
   async queryCurrentEra() {
@@ -234,13 +234,13 @@ class App extends React.Component {
     return await api.query.bridgeEos.timesOfCrossChainTrade(address);
   }
 
-  async queryEosCountMulti() {
+  async queryEosCountMulti(bifrostAddress) {
     const wsProvider = new WsProvider('wss://n1.testnet.liebi.com/');
     const api = await ApiPromise.create({
       provider: wsProvider,
       types: parameter,
     });
-    return await api.query.bridgeEos.timesOfCrossChainTrade.multi(this.state.bifrostAddress);
+    return await api.query.bridgeEos.timesOfCrossChainTrade.multi(bifrostAddress);
   }
 
   async queryEosCount(address) {
@@ -252,13 +252,13 @@ class App extends React.Component {
     return await api.query.bridgeEos.timesOfCrossChainTrade(address);
   }
 
-  async queryEosBalanceMulti() {
+  async queryEosBalanceMulti(bifrostAddress2) {
     const wsProvider = new WsProvider('wss://n1.testnet.liebi.com/');
     const api = await ApiPromise.create({
       provider: wsProvider,
       types: parameter,
     });
-    return await api.query.assets.accountAssets.multi(this.state.bifrostAddress2);
+    return await api.query.assets.accountAssets.multi(bifrostAddress2);
   }
 
   async queryEosBalance(address) {
@@ -290,7 +290,7 @@ class App extends React.Component {
       let bifrostAddress3 = [];
 
       let currentEra = await this.queryCurrentEra();
-
+      console.log('begin loop*****' + new Date().getTime());
       for (let key in liveNode) {
         let node = liveNode[key];
         if (node.fullAddress) {
@@ -299,6 +299,8 @@ class App extends React.Component {
           bifrostAddress3.push([currentEra, node.fullAddress]);
         }
        }
+
+       console.log('finish loop*****' + new Date().getTime());
        
       /**for (let key in liveNode) {
         let node = liveNode[key];
@@ -321,32 +323,85 @@ class App extends React.Component {
         bifrostAddress2,
         bifrostAddress3
       },async () => {
-        const validatorStakes = await this.queryValidatorStakesMulti();
-        const eosCountArray = await this.queryEosCountMulti();
-        const eosBalanceArray = await this.queryEosBalanceMulti();
+        const bifrostAddress3_part = JSON.parse(JSON.stringify(this.state.bifrostAddress3)).splice(0,30);
+        const bifrostAddress_part = JSON.parse(JSON.stringify(this.state.bifrostAddress)).splice(0,30);
+        const bifrostAddress2_part = JSON.parse(JSON.stringify(this.state.bifrostAddress2)).splice(0,30);
+        console.log('begin to query first 30 data******' + new Date().getTime());
+        let validatorStakes = await this.queryValidatorStakesMulti(bifrostAddress3_part);
+        let eosCountArray = await this.queryEosCountMulti(bifrostAddress_part);
+        let eosBalanceArray = await this.queryEosBalanceMulti(bifrostAddress2_part);
+        console.log('finish to query first 30 data******' + new Date().getTime());
+        console.log(validatorStakes.length + '*******' + eosCountArray.length + '****' + eosBalanceArray.length)
+        this.setDataAfterQuery(eosBalanceArray,validatorStakes,eosCountArray);
+      }); 
+      
+    }
+
+    setOtherQueryData(eosBalanceArray,validatorStakes,eosCountArray) {
+        let eosCountArrayCopy = JSON.parse(JSON.stringify(this.state.eosCountArray))
+        let eosBalanceArrayCopy = JSON.parse(JSON.stringify(this.state.eosBalanceArray));
+        let validatorArrayCopy = JSON.parse(JSON.stringify(this.state.validatorArray));
         let stateArray = [];
+        
         for (let item in eosBalanceArray) {
           stateArray.push(eosBalanceArray[item].get('balance'));
         }
-
+  
         let validator = [];
         for (let item in validatorStakes) {
           let total = Number(validatorStakes[item].get('total')) / 1000000000000;
           let own = Number(validatorStakes[item].get('own')) / 1000000000000;
-
+  
           validator.push({
             total: Number(total).toFixed(0),
             own: Number(own).toFixed(0)
           });
         }
-
+        eosCountArrayCopy = eosCountArrayCopy.concat(eosCountArray);
+        eosBalanceArrayCopy = eosBalanceArrayCopy.concat(stateArray);
+        validatorArrayCopy = validatorArrayCopy.concat(validator);
         this.setState({
-          eosCountArray,        //转入和转出次数的数组
-          eosBalanceArray:stateArray,  //eos余额数组
-          validatorArray:validator
-        })
-      }); 
-      
+          eosCountArray:eosCountArrayCopy,        //转入和转出次数的数组
+          eosBalanceArray:eosBalanceArrayCopy,  //eos余额数组
+          validatorArray:validatorArrayCopy
+        });
+        console.log('finish to set other data******' + new Date().getTime());
+        console.log(eosCountArrayCopy.length + '*******' + eosBalanceArrayCopy.length + '****' + validatorArrayCopy.length)
+    }
+
+    setDataAfterQuery(eosBalanceArray,validatorStakes,eosCountArray) {
+      let stateArray = [];
+        
+      for (let item in eosBalanceArray) {
+        stateArray.push(eosBalanceArray[item].get('balance'));
+      }
+
+      let validator = [];
+      for (let item in validatorStakes) {
+        let total = Number(validatorStakes[item].get('total')) / 1000000000000;
+        let own = Number(validatorStakes[item].get('own')) / 1000000000000;
+
+        validator.push({
+          total: Number(total).toFixed(0),
+          own: Number(own).toFixed(0)
+        });
+      }
+
+      this.setState({
+        eosCountArray,        //转入和转出次数的数组
+        eosBalanceArray:stateArray,  //eos余额数组
+        validatorArray:validator
+      }, async ()=>{
+        console.log('begin to query other data******' + new Date().getTime());
+        const bifrostAddress3_part = JSON.parse(JSON.stringify(this.state.bifrostAddress3)).splice(30);
+        const bifrostAddress_part = JSON.parse(JSON.stringify(this.state.bifrostAddress)).splice(30);
+        const bifrostAddress2_part = JSON.parse(JSON.stringify(this.state.bifrostAddress2)).splice(30);
+        let validatorStakes = await this.queryValidatorStakesMulti(bifrostAddress3_part);
+        let eosCountArray = await this.queryEosCountMulti(bifrostAddress_part);
+        let eosBalanceArray = await this.queryEosBalanceMulti(bifrostAddress2_part);
+        console.log('finish to set other data******' + new Date().getTime());
+        this.setOtherQueryData(eosBalanceArray,validatorStakes,eosCountArray);
+      })
     }
 
     setTableData = async () => {
@@ -601,7 +656,7 @@ bifrostnetwork/bifrost:asgard-v0.4.0 \\
                   { row.validatorEst } BNC
                 </StyledTableCell2>
                 <StyledTableCell3 align="center">
-                  { row.crossChain }
+                { JSON.stringify(row.crossChain) }
                 </StyledTableCell3>
                 <StyledTableCell3 align="center">
                   { row.vEosBalance }
