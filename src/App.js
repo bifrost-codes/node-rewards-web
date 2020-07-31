@@ -176,7 +176,7 @@ class App extends React.Component {
           }, async () => {
             //循环数组，如果有fullAddress就塞入数组，然后批量接口查出转入转出次数以及eos balance，
             await this.queryOtherData()
-            await this.setTableData()
+            // await this.setTableData()
           });
         }.bind(this));
   };
@@ -290,7 +290,6 @@ class App extends React.Component {
       let bifrostAddress3 = [];
 
       let currentEra = await this.queryCurrentEra();
-      console.log('begin loop*****' + new Date().getTime());
       for (let key in liveNode) {
         let node = liveNode[key];
         if (node.fullAddress) {
@@ -299,8 +298,6 @@ class App extends React.Component {
           bifrostAddress3.push([currentEra, node.fullAddress]);
         }
        }
-
-       console.log('finish loop*****' + new Date().getTime());
 
       /**for (let key in liveNode) {
         let node = liveNode[key];
@@ -364,9 +361,11 @@ class App extends React.Component {
           eosCountArray:eosCountArrayCopy,        //转入和转出次数的数组
           eosBalanceArray:eosBalanceArrayCopy,  //eos余额数组
           validatorArray:validatorArrayCopy
+        },async ()=> {
+          await this.setTableData()
         });
-        console.log('finish to set other data******' + new Date().getTime());
-        console.log(eosCountArrayCopy.length + '*******' + eosBalanceArrayCopy.length + '****' + validatorArrayCopy.length)
+        // console.log('finish to set other data******' + new Date().getTime());
+        // console.log(eosCountArrayCopy.length + '*******' + eosBalanceArrayCopy.length + '****' + validatorArrayCopy.length)
     }
 
     setDataAfterQuery(eosBalanceArray,validatorStakes,eosCountArray) {
@@ -399,7 +398,8 @@ class App extends React.Component {
         let validatorStakes = await this.queryValidatorStakesMulti(bifrostAddress3_part);
         let eosCountArray = await this.queryEosCountMulti(bifrostAddress_part);
         let eosBalanceArray = await this.queryEosBalanceMulti(bifrostAddress2_part);
-        console.log('finish to set other data******' + new Date().getTime());
+        console.log('finish to query other data******' + new Date().getTime());
+        console.log(validatorStakes.length + '*******' + eosCountArray.length + '****' + eosBalanceArray.length);
         this.setOtherQueryData(eosBalanceArray,validatorStakes,eosCountArray);
       })
     }
@@ -439,6 +439,8 @@ class App extends React.Component {
 
       tableRows.push(this.createData(node.name, address, node.fullAddress, node.timePoints, timePointEst, emptyCount));
     }
+    console.log('渲染table****' + tableRows.length + '****' + liveNode.length)
+    console.log('emptyCount的个数****' + emptyCount)
 
     this.setState({
       totalTimePoint: totalTimePoint,
