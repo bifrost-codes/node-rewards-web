@@ -390,7 +390,7 @@ class App extends React.Component {
       }
 
       this.setState({
-        eosCountArray,        //转入和转出次数的数组
+        eosCountArray,        //转入和转出次数
         eosBalanceArray:stateArray,  //eos余额数组
         validatorArray:validator
       })
