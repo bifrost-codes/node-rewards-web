@@ -174,11 +174,12 @@ class App extends React.Component {
         }).
         then(function(data) {
           this.setState({
-            liveNode: data.data,
+            liveNode: data.data.nodes,
+            totalNode: data.data.total
           }, async () => {
             //循环数组，如果有fullAddress就塞入数组，然后批量接口查出转入转出次数以及eos balance，
             await this.queryOtherData()
-            // await this.setTableData()
+            await this.setTableData()
           });
         }.bind(this));
   };
@@ -322,9 +323,9 @@ class App extends React.Component {
         bifrostAddress2,
         bifrostAddress3
       },async () => {
-        const bifrostAddress3_part = JSON.parse(JSON.stringify(this.state.bifrostAddress3)).splice(0,30);
-        const bifrostAddress_part = JSON.parse(JSON.stringify(this.state.bifrostAddress)).splice(0,30);
-        const bifrostAddress2_part = JSON.parse(JSON.stringify(this.state.bifrostAddress2)).splice(0,30);
+        const bifrostAddress_part = JSON.parse(JSON.stringify(this.state.bifrostAddress));
+        const bifrostAddress2_part = JSON.parse(JSON.stringify(this.state.bifrostAddress2));
+        const bifrostAddress3_part = JSON.parse(JSON.stringify(this.state.bifrostAddress3));
         console.log('begin to query first 30 data******' + new Date().getTime());
         let validatorStakes = await this.queryValidatorStakesMulti(bifrostAddress3_part);
         let eosCountArray = await this.queryEosCountMulti(bifrostAddress_part);
@@ -392,17 +393,6 @@ class App extends React.Component {
         eosCountArray,        //转入和转出次数的数组
         eosBalanceArray:stateArray,  //eos余额数组
         validatorArray:validator
-      }, async ()=>{
-        console.log('begin to query other data******' + new Date().getTime());
-        const bifrostAddress3_part = JSON.parse(JSON.stringify(this.state.bifrostAddress3)).splice(30);
-        const bifrostAddress_part = JSON.parse(JSON.stringify(this.state.bifrostAddress)).splice(30);
-        const bifrostAddress2_part = JSON.parse(JSON.stringify(this.state.bifrostAddress2)).splice(30);
-        let validatorStakes = await this.queryValidatorStakesMulti(bifrostAddress3_part);
-        let eosCountArray = await this.queryEosCountMulti(bifrostAddress_part);
-        let eosBalanceArray = await this.queryEosBalanceMulti(bifrostAddress2_part);
-        console.log('finish to query other data******' + new Date().getTime());
-        console.log(validatorStakes.length + '*******' + eosCountArray.length + '****' + eosBalanceArray.length);
-        this.setOtherQueryData(eosBalanceArray,validatorStakes,eosCountArray);
       })
     }
 
@@ -410,9 +400,7 @@ class App extends React.Component {
     const {liveNode, timePointRewards} = this.state;
 
     let totalTimePoint = 0;
-    let totalNode = 0;
     for (let key in liveNode) {
-      totalNode++;
       totalTimePoint += liveNode[key].timePoints;
     }
 
@@ -446,7 +434,6 @@ class App extends React.Component {
 
     this.setState({
       totalTimePoint: totalTimePoint,
-      totalNode: totalNode,
       tableRows: tableRows,
     });
   };
