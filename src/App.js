@@ -151,14 +151,15 @@ class App extends React.Component {
     this.queryNodeData();
   }
 
-  createData(name, address, fullAddress, timePoint, timePointEst, emptyCount) {
+  createData(name, address, fullAddress, timePoint, timePointEst, emptyCount, isEmpty) {
     return {
       name,
       address,
       fullAddress,
       timePoint,
       timePointEst,
-      emptyCount
+      emptyCount,
+      isEmpty
     };
   }
 
@@ -411,25 +412,27 @@ class App extends React.Component {
       let node = liveNode[key];
       let address = node.address;
 
+      let isEmpty = false;
+      if(!node.fullAddress) {
+        emptyCount ++;
+        isEmpty = true;
+      }
+
       if (address) {
         let suffix = ' ❌';
         if (node.fullAddress) {
           suffix = ' ✅';
-        } else {
-          emptyCount ++;
         }
-
         address += suffix;
       } else {
         address = '-';
-        emptyCount ++;
       }
 
       let timePointEst = Number(node.timePoints / ( totalTimePoint === 0 ? 1 : totalTimePoint ) * timePointRewards).toFixed(4);
 
-      tableRows.push(this.createData(node.name, address, node.fullAddress, node.timePoints, timePointEst, emptyCount));
+      tableRows.push(this.createData(node.name, address, node.fullAddress, node.timePoints, timePointEst, emptyCount, isEmpty));
     }
-    console.log('渲染table****' + tableRows.length + '****' + liveNode.length)
+    console.log('渲染table****' + tableRows.length + '****' + liveNode.length);
     console.log('emptyCount的个数****' + emptyCount)
 
     this.setState({
@@ -559,7 +562,7 @@ bifrostnetwork/bifrost:asgard-v0.4.0 \\
       let validatorEst = 0;
       if(validatorArray.length > 0) {
         let validator = validatorArray[key - row.emptyCount];
-        if(validator && validator.total > 0) {
+        if(validator && validator.total > 0 && !row.isEmpty) {
           let others = validator.total - validator.own;
           total = validator.total
           ownOther = validator.own + ' / ' + others
@@ -573,9 +576,9 @@ bifrostnetwork/bifrost:asgard-v0.4.0 \\
       if(eosCountArray.length > 0) {
         let cross = eosCountArray[key - row.emptyCount];
 
-        if(cross) {
+        if(cross && !row.isEmpty) {
           currentCross = Number(cross[0]) + Number(cross[1]);
-          crossDisplay = cross[0];
+          crossDisplay = (cross[0]).toString();
         }
       }
 
@@ -584,7 +587,7 @@ bifrostnetwork/bifrost:asgard-v0.4.0 \\
       if(eosBalanceArray.length > 0) {
         let balance = eosBalanceArray[key - row.emptyCount];
 
-        if(balance) {
+        if(balance && !row.isEmpty) {
           balanceDisplay = Number(Number(balance) / 1000000000000).toFixed(4) + ' vEOS';
           currentBalance = balance
         }
@@ -614,9 +617,9 @@ bifrostnetwork/bifrost:asgard-v0.4.0 \\
 
     let sortTables = [...formatTables];
 
-    sortTables = sortTables.sort(function(a, b){
-      return b.totalEst - a.totalEst
-    });
+    // sortTables = sortTables.sort(function(a, b){
+    //   return b.totalEst - a.totalEst
+    // });
 
     let tableBody = (
         <TableBody>
@@ -647,7 +650,7 @@ bifrostnetwork/bifrost:asgard-v0.4.0 \\
                   { row.validatorEst } BNC
                 </StyledTableCell2>
                 <StyledTableCell3 align="center">
-                { JSON.stringify(row.crossChain) }
+                { row.crossChain }
                 </StyledTableCell3>
                 <StyledTableCell3 align="center">
                   { row.vEosBalance }
