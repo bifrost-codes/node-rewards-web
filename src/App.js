@@ -617,9 +617,9 @@ bifrostnetwork/bifrost:asgard-v0.4.0 \\
 
     let sortTables = [...formatTables];
 
-    // sortTables = sortTables.sort(function(a, b){
-    //   return b.totalEst - a.totalEst
-    // });
+    sortTables = sortTables.sort(function(a, b){
+      return b.totalEst - a.totalEst
+    });
 
     let tableBody = (
         <TableBody>
