@@ -685,7 +685,7 @@ bifrostnetwork/bifrost:asgard-v0.4.0 \\
                       <Grid item xs={ 6 } style={ {float: 'right'} }
                             align="right">
                         <p>Total Points: { totalTimePoint }</p>
-                        <p>Nodes: { Object.keys(liveNode).length }</p>
+                        <p>Nodes: { totalNode }</p>
                         <p>Validators: { validatorCount }</p>
                         {/*<p>Total Staking (ASG): { validatorCount }</p>*/}
                       </Grid>
