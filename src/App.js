@@ -119,7 +119,11 @@ const StyledTableRow = withStyles((theme) => ( {
   },
 } ))(TableRow);
 
-const wssHost = 'wss://n2.testnet.liebi.com';
+const wssHost = [
+  'wss://n1.testnet.liebi.com/',
+  'wss://n2.testnet.liebi.com/',
+  'wss://n6.testnet.liebi.com/'
+];
 
 class App extends React.Component {
   constructor(props) {
@@ -185,8 +189,14 @@ class App extends React.Component {
         }.bind(this));
   };
 
+  chooseHost = () => {
+    let residue = new Date().getMinutes() % 3;
+
+    return wssHost[residue];
+  }
+
   // async vEosBalance(address) {
-  //   const wsProvider = new WsProvider(wssHost);
+  //   const wsProvider = new WsProvider(this.chooseHost());
   //   const api = await ApiPromise.create({
   //     provider: wsProvider,
   //     types: parameter,
@@ -198,7 +208,7 @@ class App extends React.Component {
   // }
 
   async queryValidatorStakesMulti(bifrostAddress3) {
-    const wsProvider = new WsProvider(wssHost);
+    const wsProvider = new WsProvider(this.chooseHost());
     const api = await ApiPromise.create({
       provider: wsProvider,
       types: parameter,
@@ -208,7 +218,7 @@ class App extends React.Component {
   }
 
   async queryCurrentEra() {
-    const wsProvider = new WsProvider(wssHost);
+    const wsProvider = new WsProvider(this.chooseHost());
     const api = await ApiPromise.create({
       provider: wsProvider,
       types: parameter,
@@ -220,7 +230,7 @@ class App extends React.Component {
   }
 
   async queryValidatorCount() {
-    const wsProvider = new WsProvider(wssHost);
+    const wsProvider = new WsProvider(this.chooseHost());
     const api = await ApiPromise.create({
       provider: wsProvider,
       types: parameter,
@@ -230,7 +240,7 @@ class App extends React.Component {
   }
 
   async queryEosCount(address) {
-    const wsProvider = new WsProvider(wssHost);
+    const wsProvider = new WsProvider(this.chooseHost());
     const api = await ApiPromise.create({
       provider: wsProvider,
       types: parameter,
@@ -239,7 +249,7 @@ class App extends React.Component {
   }
 
   async queryEosCountMulti(bifrostAddress) {
-    const wsProvider = new WsProvider(wssHost);
+    const wsProvider = new WsProvider(this.chooseHost());
     const api = await ApiPromise.create({
       provider: wsProvider,
       types: parameter,
@@ -248,7 +258,7 @@ class App extends React.Component {
   }
 
   async queryEosCount(address) {
-    const wsProvider = new WsProvider(wssHost);
+    const wsProvider = new WsProvider(this.chooseHost());
     const api = await ApiPromise.create({
       provider: wsProvider,
       types: parameter,
@@ -257,7 +267,7 @@ class App extends React.Component {
   }
 
   async queryEosBalanceMulti(bifrostAddress2) {
-    const wsProvider = new WsProvider(wssHost);
+    const wsProvider = new WsProvider(this.chooseHost());
     const api = await ApiPromise.create({
       provider: wsProvider,
       types: parameter,
@@ -266,7 +276,7 @@ class App extends React.Component {
   }
 
   async queryEosBalance(address) {
-    const wsProvider = new WsProvider(wssHost);
+    const wsProvider = new WsProvider(this.chooseHost());
     const api = await ApiPromise.create({
       provider: wsProvider,
       types: parameter,
@@ -276,7 +286,7 @@ class App extends React.Component {
 
 
   // async validator(address) {
-  //   const wsProvider = new WsProvider(wssHost);
+  //   const wsProvider = new WsProvider(this.chooseHost());
   //   const api = await ApiPromise.create({
   //     provider: wsProvider,
   //     types: parameter,
