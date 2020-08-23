@@ -1002,6 +1002,13 @@
   dependencies:
     regenerator-runtime "^0.13.4"
 
+"@babel/runtime@^7.11.2":
+  version "7.11.2"
+  resolved "https://registry.npm.taobao.org/@babel/runtime/download/@babel/runtime-7.11.2.tgz?cache=0&sync_timestamp=1596637820375&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2F%40babel%2Fruntime%2Fdownload%2F%40babel%2Fruntime-7.11.2.tgz#f549c13c754cc40b87644b9fa9f09a6a95fe0736"
+  integrity sha1-9UnBPHVMxAuHZEufqfCaapX+BzY=
+  dependencies:
+    regenerator-runtime "^0.13.4"
+
 "@babel/template@^7.4.0", "@babel/template@^7.8.3", "@babel/template@^7.8.6":
   version "7.8.6"
   resolved "https://registry.npm.taobao.org/@babel/template/download/@babel/template-7.8.6.tgz#86b22af15f828dfb086474f964dcc3e39c43ce2b"
@@ -1376,6 +1383,15 @@
     "@polkadot/util" "2.18.1"
     "@polkadot/util-crypto" "2.18.1"
 
+"@polkadot/keyring@^3.2.1":
+  version "3.2.1"
+  resolved "https://registry.npm.taobao.org/@polkadot/keyring/download/@polkadot/keyring-3.2.1.tgz#cfa5bc2908f324af5481d5e5c8afb991056c499a"
+  integrity sha1-z6W8KQjzJK9UgdXlyK+5kQVsSZo=
+  dependencies:
+    "@babel/runtime" "^7.11.2"
+    "@polkadot/util" "3.2.1"
+    "@polkadot/util-crypto" "3.2.1"
+
 "@polkadot/metadata@1.25.1":
   version "1.25.1"
   resolved "https://registry.npm.taobao.org/@polkadot/metadata/download/@polkadot/metadata-1.25.1.tgz#e14f5d60e6eda3bc53d4fed9481706b405163e91"
@@ -1458,6 +1474,25 @@
     tweetnacl "^1.0.3"
     xxhashjs "^0.2.2"
 
+"@polkadot/util-crypto@3.2.1":
+  version "3.2.1"
+  resolved "https://registry.npm.taobao.org/@polkadot/util-crypto/download/@polkadot/util-crypto-3.2.1.tgz#9bfd93db809efeebda975d0cc7e22f9b175ef402"
+  integrity sha1-m/2T24Ce/uval10Mx+Ivmxde9AI=
+  dependencies:
+    "@babel/runtime" "^7.11.2"
+    "@polkadot/util" "3.2.1"
+    "@polkadot/wasm-crypto" "^1.3.1"
+    base-x "^3.0.8"
+    bip39 "^3.0.2"
+    blakejs "^1.1.0"
+    bn.js "^5.1.2"
+    elliptic "^6.5.3"
+    js-sha3 "^0.8.0"
+    pbkdf2 "^3.1.1"
+    scryptsy "^2.1.0"
+    tweetnacl "^1.0.3"
+    xxhashjs "^0.2.2"
+
 "@polkadot/util@2.18.1", "@polkadot/util@^2.18.1":
   version "2.18.1"
   resolved "https://registry.npm.taobao.org/@polkadot/util/download/@polkadot/util-2.18.1.tgz#81380f21e47f3c5657ef09be7c477a72838d35eb"
@@ -1470,10 +1505,27 @@
     chalk "^4.1.0"
     ip-regex "^4.1.0"
 
+"@polkadot/util@3.2.1", "@polkadot/util@^3.2.1":
+  version "3.2.1"
+  resolved "https://registry.npm.taobao.org/@polkadot/util/download/@polkadot/util-3.2.1.tgz#791128c786f3dac4165500e1c33d49b0ad02c836"
+  integrity sha1-eREox4bz2sQWVQDhwz1JsK0CyDY=
+  dependencies:
+    "@babel/runtime" "^7.11.2"
+    "@types/bn.js" "^4.11.6"
+    bn.js "^5.1.2"
+    camelcase "^5.3.1"
+    chalk "^4.1.0"
+    ip-regex "^4.1.0"
+
 "@polkadot/wasm-crypto@^1.2.1":
   version "1.2.1"
   resolved "https://registry.npm.taobao.org/@polkadot/wasm-crypto/download/@polkadot/wasm-crypto-1.2.1.tgz#2189702447acd28d763886359576c87562241767"
   integrity sha1-IYlwJEes0o12OIY1lXbIdWIkF2c=
+
+"@polkadot/wasm-crypto@^1.3.1":
+  version "1.3.1"
+  resolved "https://registry.npm.taobao.org/@polkadot/wasm-crypto/download/@polkadot/wasm-crypto-1.3.1.tgz#975cbe97ffbd2f7f12e5b196c3bbf3f1435fe35c"
+  integrity sha1-l1y+l/+9L38S5bGWw7vz8UNf41w=
 
 "@sheerun/mutationobserver-shim@^0.3.2":
   version "0.3.3"
@@ -9856,6 +9908,11 @@ schema-utils@^2.5.0, schema-utils@^2.6.0, schema-utils@^2.6.1, schema-utils@^2.6
   dependencies:
     ajv "^6.12.0"
     ajv-keywords "^3.4.1"
+
+scryptsy@^2.1.0:
+  version "2.1.0"
+  resolved "https://registry.npm.taobao.org/scryptsy/download/scryptsy-2.1.0.tgz#8d1e8d0c025b58fdd25b6fa9a0dc905ee8faa790"
+  integrity sha1-jR6NDAJbWP3SW2+poNyQXuj6p5A=
 
 select-hose@^2.0.0:
   version "2.0.0"
