@@ -754,6 +754,8 @@ bifrostnetwork/bifrost:asgard-v0.4.0 \\
                         <p>Total Points: { totalTimePoint }</p>
                         <p>Nodes: { totalNode }</p>
                         <p>Validators: { validatorCount }</p>
+                        <p>Cross-chain: { totalCross }</p>
+                        <p>Balance: { Number(totalBalance).toFixed(0) } vEOS</p>
                         { /*<p>Total Staking (ASG): { validatorCount }</p>*/ }
                       </Grid>
                     </div>
