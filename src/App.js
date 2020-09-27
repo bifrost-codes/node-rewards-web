@@ -100,12 +100,6 @@ const StyledTableRow = withStyles((theme) => ( {
   },
 } ))(TableRow);
 
-const wssHost = [
-  'wss://n1.testnet.liebi.com/',
-  'wss://n2.testnet.liebi.com/',
-  'wss://n6.testnet.liebi.com/',
-];
-
 class App extends React.Component {
   constructor(props) {
     super(props);
