@@ -47,6 +47,7 @@ const useStyles = makeStyles((theme) => ( {
 
 const StyledPanel = withStyles((theme) => ( {
   root: {
+    fontSize: '12px',
     backgroundColor: '#424242',
     color: theme.palette.common.white,
   },
