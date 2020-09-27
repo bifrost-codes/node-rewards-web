@@ -350,7 +350,7 @@ bifrostnetwork/bifrost:asgard-v0.5.0 \\
                       <Grid item xs={ 6 } style={ {float: 'right'} }
                             align="right">
                         <p>Validators: { total_validator }</p>
-                        <p>Block: { total_block }</p>
+                        <p>Block Produce: { total_block }</p>
                         <p>Cross-chain: { total_crosschain }</p>
                         <p>vToken: { total_vtoken }</p>
                       </Grid>
@@ -443,13 +443,13 @@ bifrostnetwork/bifrost:asgard-v0.5.0 \\
                         Address
                       </StyledTableCell1>
                       <StyledTableCell1 align="center">
-                        Block
+                        Block Produce
                       </StyledTableCell1>
                       <StyledTableCell1 align="center">
                         est.
                       </StyledTableCell1>
                       <StyledTableCell2 align="center">
-                        to Bifrost&nbsp;
+                        EOS -> Bifrost&nbsp;
                         <div style={ {
                           display: 'inline-block',
                           verticalAlign: 'inherit',
@@ -463,7 +463,7 @@ bifrostnetwork/bifrost:asgard-v0.5.0 \\
                         </div>
                       </StyledTableCell2>
                       <StyledTableCell2 align="center">
-                        to EOS&nbsp;
+                        Bifrost -> EOS&nbsp;
                         <div style={ {
                           display: 'inline-block',
                           verticalAlign: 'inherit',
