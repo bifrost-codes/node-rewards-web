@@ -262,20 +262,20 @@ class App extends React.Component {
       total_vtoken,
     } = this.state;
 
-    let panel = `# Step 1. Execute the following command to join network
-# Step 2. Join telegram (https://t.me/bifrost_faucet)
-# Step 3. Say '/want + BNCAddress' in telegram group (Get ASG/KSM/DOT Test Token)
-    
+    let panel = `# Phase 1. Execute the following command to run a validator, share 9,000 BNC
 docker run \\
 -it \\
 -p 30333:30333 \\
 bifrostnetwork/bifrost:asgard-v0.5.0 \\
 --name "NodeName" \\
 --validator
+    
+# Phase 2. Cross chain EOS <-> Bifrost, share 3,000 BNC
+# Phase 3. Convert Token (DOT/KSM) to vToken (vDOT/vKSM), share 6,000 BNC
 
-# Node tutorial: https://wiki.bifrost.finance/en/help/node-general-tutorial.html
-# Validator tutorial: https://wiki.bifrost.finance/en/help/validator-tutorial.html
-# Cross-chain tutorial: https://wiki.bifrost.finance/en/help/eos-transfer-tutorial.html
+# Validator tutorial (Phase 1): https://wiki.bifrost.finance/en/help/validator-tutorial.html
+# Cross-chain tutorial (Phase 2): https://wiki.bifrost.finance/en/help/eos-transfer-tutorial.html
+# vToken tutorial (Phase 3): https://wiki.bifrost.finance/en/help/eos-veos-tutorial.html
 
 # Homepage: https://bifrost.finance
 # Dashboard: https://dash.bifrost.finance
@@ -297,7 +297,7 @@ bifrostnetwork/bifrost:asgard-v0.5.0 \\
                 <StyledTableCell1 align="right">
                   { row.block_num }
                 </StyledTableCell1>
-                <StyledTableCell1 align="right" style={ {color: '#ffffa6'} }>
+                <StyledTableCell1 align="right" style={ {color: 'yellow'} }>
                   { row.block_reward_est } BNC
                 </StyledTableCell1>
                 <StyledTableCell2 align="right">
@@ -306,7 +306,7 @@ bifrostnetwork/bifrost:asgard-v0.5.0 \\
                 <StyledTableCell2 align="right">
                   { row.bifrost_eos }
                 </StyledTableCell2>
-                <StyledTableCell2 align="right" style={ {color: '#ffffa6'} }>
+                <StyledTableCell2 align="right" style={ {color: 'yellow'} }>
                   { row.cross_chain_reward_est } BNC
                 </StyledTableCell2>
                 <StyledTableCell3 align="right">
@@ -315,7 +315,7 @@ bifrostnetwork/bifrost:asgard-v0.5.0 \\
                 <StyledTableCell3 align="right">
                   { row.vdot }
                 </StyledTableCell3>
-                <StyledTableCell3 align="right" style={ {color: '#ffffa6'} }>
+                <StyledTableCell3 align="right" style={ {color: 'yellow'} }>
                   { row.vtoken_reward_est } BNC
                 </StyledTableCell3>
                 <StyledTableCell4 align="right" style={ {color: 'yellow'} }>
