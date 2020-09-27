@@ -59,58 +59,38 @@ const CustomPaper = withStyles((theme) => ( {
 } ))(Paper);
 
 const StyledTableCell1 = withStyles((theme) => ( {
-  head: {
-    backgroundColor: '#525252',
-    color: theme.palette.common.white,
-  },
-  body: {
-    fontSize: 14,
-    color: theme.palette.common.white,
-  },
   root: {
-    borderBottom: '1px solid rgba(81, 81, 81, 1)',
+    fontSize: 12,
+    backgroundColor: '#525252',
+    borderBottom: '1px solid #696969',
+    color: theme.palette.common.white,
   },
 } ))(TableCell);
 
 const StyledTableCell2 = withStyles((theme) => ( {
-  head: {
-    backgroundColor: '#414141',
-    color: theme.palette.common.white,
-  },
-  body: {
-    fontSize: 14,
-    color: theme.palette.common.white,
-  },
   root: {
-    borderBottom: '1px solid rgba(81, 81, 81, 1)',
+    fontSize: 12,
+    color: theme.palette.common.white,
+    backgroundColor: '#414141',
+    borderBottom: '1px solid #696969',
   },
 } ))(TableCell);
 
 const StyledTableCell3 = withStyles((theme) => ( {
-  head: {
+  root: {
+    fontSize: 12,
     backgroundColor: '#313131',
     color: theme.palette.common.white,
-  },
-  body: {
-    fontSize: 14,
-    color: theme.palette.common.white,
-  },
-  root: {
-    borderBottom: '1px solid rgba(81, 81, 81, 1)',
+    borderBottom: '1px solid #696969',
   },
 } ))(TableCell);
 
 const StyledTableCell4 = withStyles((theme) => ( {
-  head: {
+  root: {
+    fontSize: 12,
     backgroundColor: '#ca3e47',
     color: theme.palette.common.white,
-  },
-  body: {
-    fontSize: 14,
-    color: theme.palette.common.white,
-  },
-  root: {
-    borderBottom: '1px solid rgba(81, 81, 81, 1)',
+    borderBottom: '1px solid #696969',
   },
 } ))(TableCell);
 
@@ -131,28 +111,13 @@ class App extends React.Component {
     super(props);
 
     this.state = {
-      timePointRewards: 5000,
-      totalTimePoint: 0,
-      validatorRewards: 4000,
-      eosRewards: 6000,
-      totalEosCross: 0,
-      totalVEosBalance: 0,
-      timeLeft: 1597982400000,
-      liveNode: [],
-      totalPoints: 0,
-      totalNode: 0,
+      timeLeft: 1604073600000,
+      nodesList: [],
+      total_block: 0,
+      total_crosschain: 0,
+      total_vtoken: 0,
+      total_validator: 0,
       tableRows: [],
-      bifrostAddress: [],
-      bifrostAddress2: [],
-      bifrostAddress3: [],
-      eosCountArray: [],
-      eosBalanceArray: [],
-      validatorArray: [],
-      validatorCount: 50,
-
-      staticValidators: [],
-      staticVEOSBalance: [],
-      staticTrxHistory: [],
     };
   }
 
@@ -160,22 +125,42 @@ class App extends React.Component {
     this.queryNodeData();
   }
 
+  milliFormat(num) {
+    return num && num.toString().replace(/\d+/, function(s) {
+      return s.replace(/(\d)(?=(\d{3})+$)/g, '$1,');
+    });
+  }
+
   createData(
-      name, address, fullAddress, timePoint, timePointEst, emptyCount,
-      isEmpty) {
+      address, block_num, block_reward_est, eos_bifrost, bifrost_eos,
+      cross_chain_reward_est, vksm, vdot, vtoken_reward_est, total_reward_est) {
+    block_num = this.milliFormat(block_num);
+    block_reward_est = this.milliFormat(Number(block_reward_est).toFixed(2));
+    eos_bifrost = this.milliFormat(eos_bifrost);
+    bifrost_eos = this.milliFormat(bifrost_eos);
+    cross_chain_reward_est = this.milliFormat(
+        Number(cross_chain_reward_est).toFixed(2));
+    vksm = this.milliFormat(Number(vksm).toFixed(2));
+    vdot = this.milliFormat(Number(vdot).toFixed(2));
+    vtoken_reward_est = this.milliFormat(Number(vtoken_reward_est).toFixed(2));
+    total_reward_est = this.milliFormat(Number(total_reward_est).toFixed(2));
+
     return {
-      name,
       address,
-      fullAddress,
-      timePoint,
-      timePointEst,
-      emptyCount,
-      isEmpty,
+      block_num,
+      block_reward_est,
+      eos_bifrost,
+      bifrost_eos,
+      cross_chain_reward_est,
+      vksm,
+      vdot,
+      vtoken_reward_est,
+      total_reward_est,
     };
   }
 
   queryNodeData = () => {
-    fetch('https://api.liebi.com/v1/bifrost/node_monitoring').
+    fetch('https://api.liebi.com/v1/bifrost/incentive').
         then(function(response) {
           if (response.status === 200) {
             return response.json();
@@ -186,341 +171,36 @@ class App extends React.Component {
         }).
         then(function(data) {
           this.setState({
-            liveNode: data.data.nodes,
-            totalNode: data.data.total,
+            nodesList: data.data['list'],
+            total_block: this.milliFormat(data.data['total_block']),
+            total_crosschain: this.milliFormat(data.data['total_crosschain']),
+            total_vtoken: this.milliFormat(data.data['total_vtoken']),
+            total_validator: this.milliFormat(data.data['total_validator']),
           }, async () => {
-            //循环数组，如果有fullAddress就塞入数组，然后批量接口查出转入转出次数以及eos balance，
-            // await this.queryOtherData()
-            await this.queryStaticData();
             await this.setTableData();
           });
         }.bind(this));
   };
 
-  chooseHost = () => {
-    let residue = new Date().getMinutes() % 3;
-
-    return wssHost[residue];
-  };
-
-  // async vEosBalance(address) {
-  //   const wsProvider = new WsProvider(this.chooseHost());
-  //   const api = await ApiPromise.create({
-  //     provider: wsProvider,
-  //     types: parameter,
-  //   });
-  //
-  //   return await api.query.assets.accountAssets(['vEOS', address], (res) => {
-  //     return Number(res['balance']) / 1000000000000
-  //   });
-  // }
-
-  async queryValidatorStakesMulti(bifrostAddress3) {
-    const wsProvider = new WsProvider(this.chooseHost());
-    const api = await ApiPromise.create({
-      provider: wsProvider,
-      types: parameter,
-    });
-
-    return await api.query.staking.erasStakers.multi(bifrostAddress3);
-  }
-
-  async queryCurrentEra() {
-    const wsProvider = new WsProvider(this.chooseHost());
-    const api = await ApiPromise.create({
-      provider: wsProvider,
-      types: parameter,
-    });
-
-    let activeEra = await api.query.staking.activeEra();
-
-    return activeEra.value.index.toString();
-  }
-
-  async queryValidatorCount() {
-    const wsProvider = new WsProvider(this.chooseHost());
-    const api = await ApiPromise.create({
-      provider: wsProvider,
-      types: parameter,
-    });
-
-    return await api.query.staking.validatorCount().toString();
-  }
-
-  async queryEosCount(address) {
-    const wsProvider = new WsProvider(this.chooseHost());
-    const api = await ApiPromise.create({
-      provider: wsProvider,
-      types: parameter,
-    });
-    return await api.query.bridgeEos.timesOfCrossChainTrade(address);
-  }
-
-  async queryEosCountMulti(bifrostAddress) {
-    const wsProvider = new WsProvider(this.chooseHost());
-    const api = await ApiPromise.create({
-      provider: wsProvider,
-      types: parameter,
-    });
-    return await api.query.bridgeEos.timesOfCrossChainTrade.multi(
-        bifrostAddress);
-  }
-
-  async queryEosCount(address) {
-    const wsProvider = new WsProvider(this.chooseHost());
-    const api = await ApiPromise.create({
-      provider: wsProvider,
-      types: parameter,
-    });
-    return await api.query.bridgeEos.timesOfCrossChainTrade(address);
-  }
-
-  async queryEosBalanceMulti(bifrostAddress2) {
-    const wsProvider = new WsProvider(this.chooseHost());
-    const api = await ApiPromise.create({
-      provider: wsProvider,
-      types: parameter,
-    });
-    return await api.query.assets.accountAssets.multi(bifrostAddress2);
-  }
-
-  async queryEosBalance(address) {
-    const wsProvider = new WsProvider(this.chooseHost());
-    const api = await ApiPromise.create({
-      provider: wsProvider,
-      types: parameter,
-    });
-    return await api.query.assets.accountAssets(['vEOS', address]);
-  }
-
-  // async validator(address) {
-  //   const wsProvider = new WsProvider(this.chooseHost());
-  //   const api = await ApiPromise.create({
-  //     provider: wsProvider,
-  //     types: parameter,
-  //   });
-  //
-  //   return await api.query.assets.accountAssets(['vEOS', address], (res) => {
-  //     return Number(res['balance']) / 1000000000000
-  //   });
-  // }
-
-  queryStaticData = async () => {
-    fetch('validators.json').
-        then(function(response) {
-          if (response.status === 200) {
-            return response.json();
-          }
-          else {
-            return [];
-          }
-        }).then(function(data) {
-      this.setState({
-        staticValidators: data,
-      });
-    }.bind(this));
-
-    fetch('all_veos.json').
-        then(function(response) {
-          if (response.status === 200) {
-            return response.json();
-          }
-          else {
-            return [];
-          }
-        }).then(function(data) {
-      this.setState({
-        staticVEOSBalance: data,
-      });
-    }.bind(this));
-
-    fetch('trx_history.json').
-        then(function(response) {
-          if (response.status === 200) {
-            return response.json();
-          }
-          else {
-            return [];
-          }
-        }).then(function(data) {
-      this.setState({
-        staticTrxHistory: data,
-      });
-    }.bind(this));
-  };
-
-  queryOtherData = async () => {
-    const {liveNode} = this.state;
-    let bifrostAddress = [];
-    let bifrostAddress2 = [];
-    let bifrostAddress3 = [];
-
-    let currentEra = await this.queryCurrentEra();
-    for (let key in liveNode) {
-      let node = liveNode[key];
-      if (node.fullAddress) {
-        bifrostAddress.push(node.fullAddress);
-        bifrostAddress2.push(['vEOS', node.fullAddress]);
-        bifrostAddress3.push([currentEra, node.fullAddress]);
-      }
-    }
-
-    /**for (let key in liveNode) {
-        let node = liveNode[key];
-        if (node.fullAddress) {
-          const eosarr = await this.queryEosCount(node.fullAddress);
-          eosCountArray.push(eosarr);
-          let eosBalanceObj = await  this.queryEosBalance(node.fullAddress);
-          eosBalanceArray.push(Number(eosBalanceObj['balance']));
-          console.log(JSON.stringify(eosCountArray) + '********' + JSON.stringify(eosBalanceArray))
-        } else {
-          eosCountArray.push([]);
-          eosBalanceArray.push(0)
-        }
-      }*/
-    // console.log('**结束' + new Date().getTime())
-    // console.log(JSON.stringify(eosCountArray) + '********' +
-    // JSON.stringify(eosBalanceArray))
-
-    this.setState({
-      bifrostAddress,
-      bifrostAddress2,
-      bifrostAddress3,
-    }, async () => {
-      const bifrostAddress_part = JSON.parse(
-          JSON.stringify(this.state.bifrostAddress));
-      const bifrostAddress2_part = JSON.parse(
-          JSON.stringify(this.state.bifrostAddress2));
-      const bifrostAddress3_part = JSON.parse(
-          JSON.stringify(this.state.bifrostAddress3));
-      console.log('begin to query first 30 data******' + new Date().getTime());
-      let validatorStakes = await this.queryValidatorStakesMulti(
-          bifrostAddress3_part);
-      let eosCountArray = await this.queryEosCountMulti(bifrostAddress_part);
-      let eosBalanceArray = await this.queryEosBalanceMulti(
-          bifrostAddress2_part);
-      console.log('finish to query first 30 data******' + new Date().getTime());
-      console.log(validatorStakes.length + '*******' + eosCountArray.length +
-          '****' + eosBalanceArray.length);
-      this.setDataAfterQuery(eosBalanceArray, validatorStakes, eosCountArray);
-    });
-
-  };
-
-  setOtherQueryData(eosBalanceArray, validatorStakes, eosCountArray) {
-    let eosCountArrayCopy = JSON.parse(
-        JSON.stringify(this.state.eosCountArray));
-    let eosBalanceArrayCopy = JSON.parse(
-        JSON.stringify(this.state.eosBalanceArray));
-    let validatorArrayCopy = JSON.parse(
-        JSON.stringify(this.state.validatorArray));
-    let stateArray = [];
-
-    for (let item in eosBalanceArray) {
-      stateArray.push(eosBalanceArray[item].get('balance'));
-    }
-
-    let validator = [];
-    for (let item in validatorStakes) {
-      let total = Number(validatorStakes[item].get('total')) / 1000000000000;
-      let own = Number(validatorStakes[item].get('own')) / 1000000000000;
-
-      validator.push({
-        total: Number(total).toFixed(0),
-        own: Number(own).toFixed(0),
-      });
-    }
-    eosCountArrayCopy = eosCountArrayCopy.concat(eosCountArray);
-    eosBalanceArrayCopy = eosBalanceArrayCopy.concat(stateArray);
-    validatorArrayCopy = validatorArrayCopy.concat(validator);
-    this.setState({
-      eosCountArray: eosCountArrayCopy,        //转入和转出次数的数组
-      eosBalanceArray: eosBalanceArrayCopy,  //eos余额数组
-      validatorArray: validatorArrayCopy,
-    }, async () => {
-      await this.setTableData();
-    });
-    // console.log('finish to set other data******' + new Date().getTime());
-    // console.log(eosCountArrayCopy.length + '*******' +
-    // eosBalanceArrayCopy.length + '****' + validatorArrayCopy.length)
-  }
-
-  setDataAfterQuery(eosBalanceArray, validatorStakes, eosCountArray) {
-    let stateArray = [];
-
-    for (let item in eosBalanceArray) {
-      stateArray.push(eosBalanceArray[item].get('balance'));
-    }
-
-    let validator = [];
-    for (let item in validatorStakes) {
-      let total = Number(validatorStakes[item].get('total')) / 1000000000000;
-      let own = Number(validatorStakes[item].get('own')) / 1000000000000;
-
-      validator.push({
-        total: Number(total).toFixed(0),
-        own: Number(own).toFixed(0),
-      });
-    }
-
-    this.setState({
-      eosCountArray,        //转入和转出次数
-      eosBalanceArray: stateArray,  //eos余额数组
-      validatorArray: validator,
-    });
-  }
-
   setTableData = async () => {
-    const {liveNode, timePointRewards} = this.state;
-
-    const keyring = new Keyring({type: 'sr25519'});
-    keyring.setSS58Format(6);
-
-    let totalTimePoint = 0;
-    for (let key in liveNode) {
-      totalTimePoint += liveNode[key].timePoints;
-    }
+    const {nodesList} = this.state;
 
     let tableRows = [];
-    let emptyCount = 0;
 
-    for (let key in liveNode) {
-      let node = liveNode[key];
-      let address = node.address;
-
-      let isEmpty = false;
-      if (!node.fullAddress) {
-        emptyCount++;
-        isEmpty = true;
-      }
-      else {
-        liveNode[key].fullAddress = keyring.encodeAddress(node.fullAddress);
-      }
-
-      if (address) {
-        let suffix = ' ❌';
-        if (node.fullAddress) {
-          suffix = ' ✅';
-        }
-        address += suffix;
-      }
-      else {
-        address = '-';
-      }
-
-      let timePointEst = Number(node.timePoints /
-          ( totalTimePoint === 0 ? 1 : totalTimePoint ) * timePointRewards).
-          toFixed(4);
-
+    for (let node in nodesList) {
       tableRows.push(
-          this.createData(node.name, address, node.fullAddress, node.timePoints,
-              timePointEst, emptyCount, isEmpty));
+          this.createData(nodesList[node].address, nodesList[node].block_num,
+              nodesList[node].block_reward_est,
+              nodesList[node].cross_chain.eos_bifrost,
+              nodesList[node].cross_chain.bifrost_eos,
+              nodesList[node].cross_chain_reward_est,
+              nodesList[node].vtoken_balance.vksm,
+              nodesList[node].vtoken_balance.vdot,
+              nodesList[node].vtoken_reward_est,
+              nodesList[node].total_reward_est));
     }
-    console.log('渲染table****' + tableRows.length + '****' + liveNode.length);
-    console.log('emptyCount的个数****' + emptyCount);
 
     this.setState({
-      totalTimePoint: totalTimePoint,
       tableRows: tableRows,
     });
   };
@@ -537,11 +217,11 @@ class App extends React.Component {
       );
     }
     else {
-      return <span>The Asgard CC2 test incentive has ended, the reward will be settled before August 28</span>;
+      return <span>9,000 BNC</span>;
     }
   };
 
-  kingValidatorCountdownRenderer = ({days, hours, minutes, seconds, completed}) => {
+  CrossChainCountdownRenderer = ({days, hours, minutes, seconds, completed}) => {
     if (!completed) {
       let d = days <= 1 ? 'day' : 'days';
       let h = hours < 10 ? '0' : '';
@@ -549,17 +229,17 @@ class App extends React.Component {
       let s = seconds < 10 ? '0' : '';
 
       return (
-          <span>4,000 BNC Launch in { days } { d } { h }{ hours }:{ m }{ minutes }:{ s }{ seconds }</span>
+          <span>3,000 BNC Launch in { days } { d } { h }{ hours }:{ m }{ minutes }:{ s }{ seconds }</span>
       );
     }
     else {
       return (
-          <span>4,000 BNC</span>
+          <span>3,000 BNC</span>
       );
     }
   };
 
-  EosCrossChainCountdownRenderer = ({days, hours, minutes, seconds, completed}) => {
+  vTokenCountdownRenderer = ({days, hours, minutes, seconds, completed}) => {
     if (!completed) {
       let d = days <= 1 ? 'day' : 'days';
       let h = hours < 10 ? '0' : '';
@@ -580,44 +260,24 @@ class App extends React.Component {
   render() {
     const classes = useStyles;
     const {
-      timePointRewards,
-      totalTimePoint,
-      validatorRewards,
-      eosRewards,
-      totalEosCross,
-      totalVEosBalance,
       timeLeft,
-      liveNode,
-      totalPoints,
-      totalNode,
       tableRows,
-      eosCountArray,
-      eosBalanceArray,
-      validatorArray,
-      validatorCount,
-      staticValidators,
-      staticVEOSBalance,
-      staticTrxHistory,
+      total_validator,
+      total_block,
+      total_crosschain,
+      total_vtoken,
     } = this.state;
 
     let panel = `# Step 1. Execute the following command to join network
 # Step 2. Join telegram (https://t.me/bifrost_faucet)
-# Step 3. Say '/want + BNCAddress' in telegram group (trigger bot and record BNC address)
+# Step 3. Say '/want + BNCAddress' in telegram group (Get ASG/KSM/DOT Test Token)
     
 docker run \\
 -it \\
 -p 30333:30333 \\
--p 9944:9944 \\
--v /tmp/bifrost-node:/node \\
-bifrostnetwork/bifrost:asgard-v0.4.0 \\
---base-path '/node' \\
---name "NodeName | BNCAddress" \\
---rpc-cors 'all' \\
---unsafe-ws-external \\
+bifrostnetwork/bifrost:asgard-v0.5.0 \\
+--name "NodeName" \\
 --validator
-
-# BNCAddress is the top 10 digits of the Bifrost address
-# Match the full address need trigger bot (Step 3)
 
 # Node tutorial: https://wiki.bifrost.finance/en/help/node-general-tutorial.html
 # Validator tutorial: https://wiki.bifrost.finance/en/help/validator-tutorial.html
@@ -627,102 +287,45 @@ bifrostnetwork/bifrost:asgard-v0.4.0 \\
 # Dashboard: https://dash.bifrost.finance
 `;
 
-    let formatTables = [];
-
-    let totalCross = 0;
-
-    for (let key in staticTrxHistory) {
-      totalCross += Number(staticTrxHistory[key].times);
-    }
-
-    let totalBalance = 0;
-    for (let key in staticVEOSBalance) {
-      totalBalance += Number(staticVEOSBalance[key]);
-    }
-
-    tableRows.map((row, key) => {
-      let isValidator = '-';
-      let validatorEst = 0;
-      if (staticValidators.length > 0) {
-        if (staticValidators.indexOf(row.fullAddress) >= 0) {
-          isValidator = '✅';
-          validatorEst = Number(validatorRewards / validatorCount).toFixed(4);
-        }
-      }
-
-      let crossDisplay = '-';
-      let currentCross = 0;
-      if (staticTrxHistory[row.fullAddress]) {
-        currentCross = Number(staticTrxHistory[row.fullAddress].times);
-        crossDisplay = ( currentCross ).toString();
-      }
-
-      let balanceDisplay = '-';
-      let currentBalance = 0;
-      if(staticVEOSBalance[row.fullAddress]) {
-        currentBalance = staticVEOSBalance[row.fullAddress];
-        balanceDisplay = Number(currentBalance).toFixed(0) + ' vEOS';
-      }
-
-      let crossChainEst = Number(( currentCross / ( totalCross === 0 ? 1 : totalCross ) * 0.7 + currentBalance / ( totalBalance === 0 ? 1 : totalBalance ) * 0.3 ) * eosRewards).toFixed(4);
-
-      let totalEst = Number(Number(row.timePointEst) + Number(validatorEst) + Number(crossChainEst)).toFixed(4);
-
-      let updateRow = {
-        name: row.name,
-        address: row.address,
-        timePoint: row.timePoint,
-        timePointEst: row.timePointEst,
-        validator: isValidator,
-        validatorEst: validatorEst,
-        crossChain: crossDisplay,
-        vEosBalance: balanceDisplay,
-        crossChainEst: crossChainEst,
-        totalEst: totalEst,
-      };
-
-      formatTables.push(updateRow);
-    });
-
-    let sortTables = [...formatTables];
+    let sortTables = [...tableRows];
 
     sortTables = sortTables.sort(function(a, b) {
-      return b.totalEst - a.totalEst;
+      return b.total_reward_est - a.total_reward_est;
     });
 
     let tableBody = (
         <TableBody>
           { sortTables.map((row, key) => (
               <StyledTableRow hover key={ key }>
-                <StyledTableCell1 component="th" scope="row" align="left">
-                  { row.name }
-                </StyledTableCell1>
                 <StyledTableCell1 align="left">
                   { row.address }
                 </StyledTableCell1>
                 <StyledTableCell1 align="right">
-                  { row.timePoint }
+                  { row.block_num }
                 </StyledTableCell1>
                 <StyledTableCell1 align="right" style={ {color: '#ffffa6'} }>
-                  { row.timePointEst } BNC
+                  { row.block_reward_est } BNC
                 </StyledTableCell1>
-                <StyledTableCell2 align="center">
-                  { row.validator }
+                <StyledTableCell2 align="right">
+                  { row.eos_bifrost }
+                </StyledTableCell2>
+                <StyledTableCell2 align="right">
+                  { row.bifrost_eos }
                 </StyledTableCell2>
                 <StyledTableCell2 align="right" style={ {color: '#ffffa6'} }>
-                  { row.validatorEst } BNC
+                  { row.cross_chain_reward_est } BNC
                 </StyledTableCell2>
-                <StyledTableCell3 align="center">
-                  { row.crossChain }
+                <StyledTableCell3 align="right">
+                  { row.vksm }
                 </StyledTableCell3>
-                <StyledTableCell3 align="center">
-                  { row.vEosBalance }
+                <StyledTableCell3 align="right">
+                  { row.vdot }
                 </StyledTableCell3>
                 <StyledTableCell3 align="right" style={ {color: '#ffffa6'} }>
-                  { row.crossChainEst } BNC
+                  { row.vtoken_reward_est } BNC
                 </StyledTableCell3>
                 <StyledTableCell4 align="right" style={ {color: 'yellow'} }>
-                  { row.totalEst } BNC
+                  { row.total_reward_est } BNC
                 </StyledTableCell4>
               </StyledTableRow>
           )) }
@@ -744,19 +347,17 @@ bifrostnetwork/bifrost:asgard-v0.4.0 \\
                     <div className="rules">
                       <Grid item xs={ 6 } style={ {float: 'left'} }>
                         <p>Rewards: <span
-                            style={ {color: 'yellow'} }>15,000 BNC</span></p>
+                            style={ {color: 'yellow'} }>18,000 BNC</span></p>
                         <p>Timeleft: <Countdown date={ timeLeft }
                                                 renderer={ this.countdownRenderer }/>
                         </p>
                       </Grid>
                       <Grid item xs={ 6 } style={ {float: 'right'} }
                             align="right">
-                        <p>Total Points: { totalTimePoint }</p>
-                        <p>Nodes: { totalNode }</p>
-                        <p>Validators: { validatorCount }</p>
-                        <p>Cross-chain: { totalCross }</p>
-                        <p>Balance: { Number(totalBalance).toFixed(0) } vEOS</p>
-                        { /*<p>Total Staking (ASG): { validatorCount }</p>*/ }
+                        <p>Validators: { total_validator }</p>
+                        <p>Block: { total_block }</p>
+                        <p>Cross-chain: { total_crosschain }</p>
+                        <p>vToken: { total_vtoken }</p>
                       </Grid>
                     </div>
                   </Grid>
@@ -786,8 +387,8 @@ bifrostnetwork/bifrost:asgard-v0.4.0 \\
                 <Table className={ classes.table } aria-label="simple table">
                   <TableHead>
                     <StyledTableRow>
-                      <StyledTableCell1 align="center" colSpan={ 4 }>
-                        Node Duration Competition&nbsp;
+                      <StyledTableCell1 align="center" colSpan={ 3 }>
+                        Validator Production Block Competition&nbsp;
                         <div style={ {
                           display: 'inline-block',
                           verticalAlign: 'inherit',
@@ -795,15 +396,15 @@ bifrostnetwork/bifrost:asgard-v0.4.0 \\
                           paddingRight: '3px',
                         } }>
                           <Tooltip placement="top"
-                                   title="Calculate: TimePoint / SUM(TimePoint) * 5,000 BNC">
+                                   title="Calculate: BlockNum / SUM(BlockNum) * 9,000 BNC">
                             <InfoIcon fontSize="small"/>
                           </Tooltip>
                         </div>
                         <br/>
-                        <span style={ {color: 'yellow'} }>5,000 BNC</span>
+                        <span style={ {color: 'yellow'} }>9,000 BNC</span>
                       </StyledTableCell1>
-                      <StyledTableCell2 align="center" colSpan={ 2 }>
-                        Validator King Contest (Top 50)&nbsp;
+                      <StyledTableCell2 align="center" colSpan={ 3 }>
+                        EOS Cross-chain Competition&nbsp;
                         <div style={ {
                           display: 'inline-block',
                           verticalAlign: 'inherit',
@@ -811,17 +412,17 @@ bifrostnetwork/bifrost:asgard-v0.4.0 \\
                           paddingRight: '3px',
                         } }>
                           <Tooltip placement="top"
-                                   title="Calculate: 4,000 BNC / SUM(Validator ✅)">
+                                   title="Calculate: Cross-chain Times / SUM(Cross-chain Times) * 3,000 BNC">
                             <InfoIcon fontSize="small"/>
                           </Tooltip>
                         </div>
                         <br/>
                         <span style={ {color: 'yellow'} }><Countdown
-                            date={ 1595563200000 }
-                            renderer={ this.kingValidatorCountdownRenderer }/></span>
+                            date={ 1601438400000 }
+                            renderer={ this.CrossChainCountdownRenderer }/></span>
                       </StyledTableCell2>
                       <StyledTableCell3 align="center" colSpan={ 3 }>
-                        EOS Cross-chain Contest&nbsp;
+                        vToken Balance Competition&nbsp;
                         <div style={ {
                           display: 'inline-block',
                           verticalAlign: 'inherit',
@@ -829,14 +430,14 @@ bifrostnetwork/bifrost:asgard-v0.4.0 \\
                           paddingRight: '3px',
                         } }>
                           <Tooltip placement="top"
-                                   title="Calculate: (Cross-chain Times / SUM(Cross-chain Times) * 0.7 + vEOS Balance / SUM(vEOS Balance) * 0.3) * 6,000 BNC">
+                                   title="Calculate: (vKSM + vDOT) / SUM(vKSM + vDOT) * 6,000 BNC">
                             <InfoIcon fontSize="small"/>
                           </Tooltip>
                         </div>
                         <br/>
                         <span style={ {color: 'yellow'} }><Countdown
-                            date={ 1595822400000 }
-                            renderer={ this.EosCrossChainCountdownRenderer }/></span>
+                            date={ 1602302400000 }
+                            renderer={ this.vTokenCountdownRenderer }/></span>
                       </StyledTableCell3>
                       <StyledTableCell4 align="right">
                         Total
@@ -844,25 +445,16 @@ bifrostnetwork/bifrost:asgard-v0.4.0 \\
                     </StyledTableRow>
                     <StyledTableRow>
                       <StyledTableCell1 align="center">
-                        Node Name
-                      </StyledTableCell1>
-                      <StyledTableCell1 align="center">
                         Address
                       </StyledTableCell1>
                       <StyledTableCell1 align="center">
-                        TimePoint
+                        Block
                       </StyledTableCell1>
                       <StyledTableCell1 align="center">
                         est.
                       </StyledTableCell1>
                       <StyledTableCell2 align="center">
-                        Validator
-                      </StyledTableCell2>
-                      <StyledTableCell2 align="center">
-                        est.
-                      </StyledTableCell2>
-                      <StyledTableCell3 align="center">
-                        Cross-chain&nbsp;
+                        to Bifrost&nbsp;
                         <div style={ {
                           display: 'inline-block',
                           verticalAlign: 'inherit',
@@ -870,13 +462,33 @@ bifrostnetwork/bifrost:asgard-v0.4.0 \\
                           paddingRight: '3px',
                         } }>
                           <Tooltip placement="top"
-                                   title="EOS Jungle Testnet -> Bifrost transfer amount ≥ 50 EOS, count 1 time of cross-chain">
+                                   title="From EOS to Bifrost transfer amount ≥ 50 EOS, count 1 time of cross-chain">
                             <InfoIcon fontSize="small"/>
                           </Tooltip>
                         </div>
+                      </StyledTableCell2>
+                      <StyledTableCell2 align="center">
+                        to EOS&nbsp;
+                        <div style={ {
+                          display: 'inline-block',
+                          verticalAlign: 'inherit',
+                          lineHeight: '16px',
+                          paddingRight: '3px',
+                        } }>
+                          <Tooltip placement="top"
+                                   title="From Bifrost to EOS transfer amount ≥ 50 EOS, count 1 time of cross-chain">
+                            <InfoIcon fontSize="small"/>
+                          </Tooltip>
+                        </div>
+                      </StyledTableCell2>
+                      <StyledTableCell2 align="center">
+                        est.
+                      </StyledTableCell2>
+                      <StyledTableCell3 align="center">
+                        vKSM
                       </StyledTableCell3>
                       <StyledTableCell3 align="right">
-                        vEOS Balance
+                        vDOT
                       </StyledTableCell3>
                       <StyledTableCell3 align="right">
                         est.
