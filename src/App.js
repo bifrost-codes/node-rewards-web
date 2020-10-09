@@ -413,7 +413,7 @@ bifrostnetwork/bifrost:asgard-v0.5.0 \\
                         </div>
                         <br/>
                         <span style={ {color: 'yellow'} }><Countdown
-                            date={ 1602302400000 }
+                            date={ 1602820800000 }
                             renderer={ this.CrossChainCountdownRenderer }/></span>
                       </StyledTableCell2>
                       <StyledTableCell3 align="center" colSpan={ 3 }>
