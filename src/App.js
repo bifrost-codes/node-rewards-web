@@ -106,7 +106,7 @@ class App extends React.Component {
     super(props);
 
     this.state = {
-      timeLeft: 1604073600000,
+      timeLeft: 1604116800000,
       nodesList: [],
       total_block: 0,
       total_crosschain: 0,
