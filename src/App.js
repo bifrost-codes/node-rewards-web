@@ -212,7 +212,7 @@ class App extends React.Component {
       );
     }
     else {
-      return <span>9,000 BNC</span>;
+      return <span>Congratulations to users who participated in Asgard CC3, rewards will be issued before November 6</span>;
     }
   };
 
