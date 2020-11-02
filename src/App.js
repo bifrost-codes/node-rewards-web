@@ -127,10 +127,12 @@ class App extends React.Component {
   }
 
   createData(
-      address, block_num, block_reward_est, eos_bifrost, bifrost_eos,
+      address, block_num, block_reward_est, compensation_block_num, compensation_block_reward_est, eos_bifrost, bifrost_eos,
       cross_chain_reward_est, vksm, vdot, vtoken_reward_est, total_reward_est) {
     block_num = this.milliFormat(block_num);
     block_reward_est = this.milliFormat(Number(block_reward_est).toFixed(2));
+    compensation_block_num = this.milliFormat(compensation_block_num);
+    compensation_block_reward_est = this.milliFormat(Number(compensation_block_reward_est).toFixed(2));
     eos_bifrost = this.milliFormat(eos_bifrost);
     bifrost_eos = this.milliFormat(bifrost_eos);
     cross_chain_reward_est = this.milliFormat(
@@ -144,6 +146,8 @@ class App extends React.Component {
       address,
       block_num,
       block_reward_est,
+      compensation_block_num,
+      compensation_block_reward_est,
       eos_bifrost,
       bifrost_eos,
       cross_chain_reward_est,
@@ -167,7 +171,7 @@ class App extends React.Component {
         then(function(data) {
           this.setState({
             nodesList: data.data['list'],
-            total_block: this.milliFormat(data.data['total_block']),
+            total_block: this.milliFormat(data.data['total_block'] + data.data['total_compensation_block']),
             total_crosschain: this.milliFormat(data.data['total_crosschain']),
             total_vtoken: this.milliFormat(data.data['total_vtoken']),
             total_validator: this.milliFormat(data.data['total_validator']),
@@ -184,8 +188,12 @@ class App extends React.Component {
 
     for (let node in nodesList) {
       tableRows.push(
-          this.createData(nodesList[node].address, nodesList[node].block_num,
+          this.createData(
+              nodesList[node].address,
+              nodesList[node].block_num,
               nodesList[node].block_reward_est,
+              nodesList[node].compensation_block_num,
+              nodesList[node].compensation_block_reward_est,
               nodesList[node].cross_chain.eos_bifrost,
               nodesList[node].cross_chain.bifrost_eos,
               nodesList[node].cross_chain_reward_est,
@@ -301,6 +309,12 @@ bifrostnetwork/bifrost:asgard-v0.5.0 \\
                 <StyledTableCell1 align="right" style={ {color: 'yellow'} }>
                   { row.block_reward_est } BNC
                 </StyledTableCell1>
+                <StyledTableCell1 align="right">
+                  { row.compensation_block_num }
+                </StyledTableCell1>
+                <StyledTableCell1 align="right" style={ {color: 'yellow'} }>
+                  { row.compensation_block_reward_est } BNC
+                </StyledTableCell1>
                 <StyledTableCell2 align="right">
                   { row.eos_bifrost }
                 </StyledTableCell2>
@@ -341,8 +355,7 @@ bifrostnetwork/bifrost:asgard-v0.5.0 \\
                   <Grid item xs={ 12 }>
                     <div className="rules">
                       <Grid item xs={ 6 } style={ {float: 'left'} }>
-                        <p>Rewards: <span
-                            style={ {color: 'yellow'} }>18,000 BNC</span></p>
+                        <p>Rewards: <span style={ {color: 'yellow'} }>18,000 BNC + 500 BNC (Additional)</span></p>
                         <p>Timeleft: <Countdown date={ timeLeft }
                                                 renderer={ this.countdownRenderer }/>
                         </p>
@@ -382,7 +395,7 @@ bifrostnetwork/bifrost:asgard-v0.5.0 \\
                 <Table className={ classes.table } aria-label="simple table">
                   <TableHead>
                     <StyledTableRow>
-                      <StyledTableCell1 align="center" colSpan={ 3 }>
+                      <StyledTableCell1 align="center" colSpan={ 5 }>
                         Validator Production Block Competition&nbsp;
                         <div style={ {
                           display: 'inline-block',
@@ -396,7 +409,7 @@ bifrostnetwork/bifrost:asgard-v0.5.0 \\
                           </Tooltip>
                         </div>
                         <br/>
-                        <span style={ {color: 'yellow'} }>9,000 BNC</span>
+                        <span style={ {color: 'yellow'} }>9,000 BNC + 500 BNC (Additional)</span>
                       </StyledTableCell1>
                       <StyledTableCell2 align="center" colSpan={ 3 }>
                         EOS Cross-chain Competition&nbsp;
@@ -443,10 +456,16 @@ bifrostnetwork/bifrost:asgard-v0.5.0 \\
                         Address
                       </StyledTableCell1>
                       <StyledTableCell1 align="center">
-                        Block Produce
+                        {"<= 126 ERA"}
                       </StyledTableCell1>
                       <StyledTableCell1 align="center">
-                        est.
+                        est. (Original)
+                      </StyledTableCell1>
+                      <StyledTableCell1 align="center">
+                        {"> 126 ERA"}
+                      </StyledTableCell1>
+                      <StyledTableCell1 align="center">
+                        est. (Additional)
                       </StyledTableCell1>
                       <StyledTableCell2 align="center">
                         EOS -> Bifrost&nbsp;
